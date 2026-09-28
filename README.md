@@ -9,6 +9,13 @@ Then there is a global unitary U on C^d ⊗ C^d such that **both** marginals of 
 
 Physically: correlations between two identical thermal systems can always be created at the minimal energy cost. Previously this was known only for d ≤ 4.
 
+> **Status (2026-09-28):** the conjecture is proved for **every dimension d without Kirwan's theorem**:
+> - an elementary, explicit proof whose reduction step is **machine-checked in Lean** (row 4 below);
+> - the remaining lemma is proved **for all n** on paper, with six one-parameter facts verified exactly by two independent computer methods (row 8);
+> - it is machine-checked in Lean with **no hypotheses at all for d ≤ 40**.
+>
+> The Lean formalisation of the last lemma, which would make the all-d Lean proof hypothesis-free, is in progress.
+
 ## What is proved, and how strongly
 
 | # | statement | status | where |
@@ -20,10 +27,11 @@ Physically: correlations between two identical thermal systems can always be cre
 | 5 | `IntervalUnifAll n` for **all n ≤ 140**, via an explicit construction with exact rational certificates (per-interval "dipole" construction). With #4 this gives the conjecture for **every d ≤ 140** | exact computer verification (Python `fractions`), two independent implementations | `certificates/per_interval_dipole/`, `code/coord_check_dip.py`, `logs/` |
 | 6 | Conjecture for **every d** (paper proof, Kirwan route: explicit circulant construction + Kirwan convexity + Lemma 5) | proved on paper; numerically verified on 20 000 random instances (d ≤ 15); **external referee check requested** | `math/kirwan_route_all_d_REPORT.md` |
 | 7 | Hook Decomposition Lemma HD(n) (a stronger combinatorial statement that also implies #4) for all n ≤ 102 | Doubling Lemma HD(M) ⇒ HD(2M) machine-checked; exact certificates for odd n ≤ 101 | `lean/STUProof/HookDoubling.lean`, `math/`, `logs/` |
+| 8 | **`IntervalUnifAll n` for EVERY n**, via an explicit one-dipole construction. Together with #4 this gives the **conjecture for every d, without Kirwan** | **complete paper proof**. The only computer inputs are six one-parameter facts F1–F6 (about a(K) = 4K²(−1)^K(ln 2 − Σ_{i≤K}(−1)^{i−1}/i) + 1 − 2K), verified exactly by two independent methods; the construction is also exact-checked for all intervals n ≤ 170 and sampled up to n = 4000 | `math/UNIF_all_n_PROOF.md`, `code/verify_facts.py`, `code/coord_facts.py`, `logs/unif_all_n_*` |
 
 The strong form "every spectrum majorised by the initial one is reachable" is **false** for d ≥ 4; an explicit counterexample is given in `math/kirwan_route_all_d_REPORT.md`.
 
-**Open (in progress):** a proof of the inequality in #3, or of the per-interval construction in #5, for **all** n. That would make the Lean proof unconditional in every dimension. Both statements are verified exactly far beyond the needed small cases (#3 for n ≤ 76; #5 for n ≤ 140). See `PROOF_OVERVIEW.md` §5.
+**Remaining (in progress):** the Lean formalisation of #8, a finite algebraic argument plus elementary analysis of β(x) = Σ_{j≥0}(−1)^j/(x+j) (see `math/UNIF_all_n_PROOF.md`, §8 'Lean notes'). This will make the all-d Lean proof hypothesis-free. Item #3 (the cross construction X) is superseded by #8 and is kept as an alternative route.
 
 ## Verify it yourself
 
@@ -57,6 +65,8 @@ python coord_check_dip.py fast 2 140     # every interval [lo,hi] of every box n
 python coord_check_dip.py full 2 30      # full-matrix exact check (symmetry, [0,1], runs, rows)
 python coord_check_hook.py               # hook decompositions n = 1..41 (odd n > 20 from ../certificates)
 python coord_check_X.py 1 30             # the explicit cross construction X of item 3, all intervals, n <= 30
+python verify_facts.py                   # facts F1-F6 of the all-n proof (item 8), exact
+python coord_facts.py                    # the same facts, independent method (interval arithmetic + Sturm)
 ```
 
 ## Repository layout

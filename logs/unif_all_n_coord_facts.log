@@ -1,0 +1,14 @@
+(a) interval checks K = 1..60: F1-F4 True;  F5 True;  F6 True
+    a(1) in [0.227411277760,0.227411277760] (= 3-4ln2 = 0.227411277760)
+(b) eps5 = -(248*x**6 + 744*x**5 + 1080*x**4 + 920*x**3 + 472*x**2 + 136*x + 17)/(16*x**8*(x + 1)**8);  sign on [60,inf): -1, no roots True;  |eps5| decreasing: True
+    omega(k) = k[ -((-1)^k b(k) - b(2k)) - ((-1)^(k+1) b(k+1) + b(2k+1)) ] checked k=2..39 (100 digits): True
+    omega(k) = (-1)^k (2k beta(k+1) - 1) + 2k beta(2k) - 1/2 checked k=2..39: True
+    F1  a(K) > 0: numerator deg 6, no roots >= 60 and positive: True; denominator ok: True
+    F2  a(K) - a(K+1) > 0: numerator deg 14, no roots >= 60 and positive: True; denominator ok: True
+    F3  1/(2(K+1)) - a(K) - a(K+1) >= 0: numerator deg 16, no roots >= 60 and positive: True; denominator ok: True
+    F4  w(K) > 0      (K even): numerator deg 15, no roots >= 60 and positive: True; denominator ok: True
+    F4  4w - (K+1)(a(K)+a(K+1)) >= 0 (K even): numerator deg 22, no roots >= 60 and positive: True; denominator ok: True
+    F4  w(K) > 0      (K odd): numerator deg 16, no roots >= 60 and positive: True; denominator ok: True
+    F4  4w - (K+1)(a(K)+a(K+1)) >= 0 (K odd): numerator deg 23, no roots >= 60 and positive: True; denominator ok: True
+(b) all large-K facts for K >= 60: True
+ALL COORDINATOR FACT CHECKS: True
