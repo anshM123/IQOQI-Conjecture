@@ -1,0 +1,38 @@
+# coordinator re-check of GeneralH.lean + AxiomsGenH.lean, started 2026-09-28 18:03:23
+# sha256 GeneralH.lean f62af11c06698983f51832829199a7c7e891178d6fe98a444112331738541cc2
+# sha256 AxiomsGenH.lean b37ca0a29092400793533972ba7a1d2f5439f2d55cd2aa79ed0e3b4b52fde24a
+== STUProof/GeneralH.lean
+   waiting: 1 lean process(es) running, 7781 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 8200 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6198 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 5988 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6026 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6044 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6286 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6157 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6070 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6037 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6071 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6032 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6043 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 7009 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6931 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6813 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 5909 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 5902 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 5944 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6223 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6211 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6217 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6133 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6015 MB available (need 0 and >= 6000 MB)
+   waiting: 1 lean process(es) running, 6138 MB available (need 0 and >= 6000 MB)
+== STUProof/AxiomsGenH.lean
+'STUProof.thermalState_diag' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.thermalState_conj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.exists_sorted_diagonalization' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.exists_thermalState_eq_conj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_hermitian' depends on axioms: [propext, Classical.choice, Quot.sound]
+== forbidden keywords (sorry/admit/axiom/native_decide) in GeneralH.lean, AxiomsGenH.lean:
+none
+CHECK_EXIT=0 after 1245 s (including waits for a free Lean slot)

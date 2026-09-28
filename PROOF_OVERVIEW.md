@@ -10,7 +10,7 @@ Local unitaries V ⊗ W and the spectral theorem reduce STU(d) to a spectral sta
 
 q ∈ symMarginalSpectra(p ⊗ p),
 
-that is, some state unitarily equivalent to diag(p ⊗ p) has **both** marginals equal to diag(q). This reduction is `stu_of_mem_symMarginalSpectra`. It also uses the real Schur–Horn theorem, which is proved in `SchurHorn.lean` (Chan–Li-type induction, sorting-free hockey-stick majorisation).
+that is, some state unitarily equivalent to diag(p ⊗ p) has **both** marginals equal to diag(q). This reduction is `stu_of_mem_symMarginalSpectra`. The step from an arbitrary Hermitian H (thermal state e^{−βH}/Tr e^{−βH} via Mathlib's matrix exponential) to H = diag(E) with E sorted is `stu_exists_hermitian` in `GeneralH.lean`. It also uses the real Schur–Horn theorem, which is proved in `SchurHorn.lean` (Chan–Li-type induction, sorting-free hockey-stick majorisation).
 
 ## 2. Kirwan route: all d on paper; Lean conditional on Kirwan (`Construction.lean`, `Lemma5.lean`, `STU.lean`)
 1. **Explicit reachable points v_k (proved for all d, in Lean).** Fix n = k+1 top levels T and tails J.
