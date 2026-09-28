@@ -1,0 +1,2 @@
+# exact hook decomposition of the 1-box: a s i value
+0 0 0 1

@@ -1,0 +1,9 @@
+# UNIF(n=9,lo,hi): D_ren + dipoles; lines "lo hi level amplitude" for the corrected intervals
+6 6 6 141/299
+6 6 5 121/367
+5 7 7 199/449
+5 7 6 469/823
+6 7 7 461/816
+6 7 6 302/929
+7 7 7 411/659
+7 7 6 29/726

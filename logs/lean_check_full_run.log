@@ -1,0 +1,75 @@
+== STUProof/SchurHorn.lean
+== STUProof/Construction.lean
+== STUProof/Lemma5.lean
+== STUProof/STU.lean
+== STUProof/KirwanFreeCore.lean
+== STUProof/KirwanFreeHook.lean
+== STUProof/HookCertificates.lean
+== STUProof/KirwanFree.lean
+== STUProof/HookDoubling.lean
+== STUProof/HookCertSplit.lean
+== STUProof/HookCert21.lean
+== STUProof/HookCert23.lean
+== STUProof/HookCert25.lean
+== STUProof/HookCert27.lean
+== STUProof/HookCert29.lean
+== STUProof/HookCert31.lean
+== STUProof/HookCert33.lean
+== STUProof/HookCert35.lean
+== STUProof/HookCert37.lean
+== STUProof/HookCert39.lean
+== STUProof/KirwanFree40.lean
+== STUProof/IntervalUnif.lean
+== STUProof/KirwanFreeU.lean
+== STUProof/Renewal.lean
+== STUProof/CrossUnif.lean
+== STUProof/KirwanFreeAllD.lean
+== STUProof/ShortNonnegSmall.lean
+== STUProof/Axioms.lean
+'STUProof.schurHorn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.exists_constr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.vk_reachable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.lemma5' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.gibbs_mem_convexHull' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.vk_mem_symMarginalSpectra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.symMarginalSpectra_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.symMarginalSpectra_eq_charpoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_of_mem_symMarginalSpectra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.lc_reachable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.tri_reachable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.ReachTri.convex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.lemmaT' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.thermal_clip_weights' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.unif_smaj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.wk_cell_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.leftM_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.wk_reach' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.gibbs_reachTri' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_kirwanFree' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_of_hookDecomposition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_le_20' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_le_20' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.IsHookCells.double' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_double' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_two_pow_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_pow2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_39' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_le_40' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.hookDecomposition_two_pow_mul_le_40' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_le_40' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.intervalUnifAll_of_hookDecomposition' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_of_intervalUnif' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.isIntervalUnif_renU' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.isIntervalUnif_boxJ' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.IsIntervalUnif.compl' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.isIntervalUnif_crossX' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.intervalUnifAll_of_shortNonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_of_shortNonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_all_of_shortNonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.xShortNonneg_le_8' depends on axioms: [propext, Classical.choice, Quot.sound]
+'STUProof.stu_exists_le_8_of_unif' depends on axioms: [propext, Classical.choice, Quot.sound]
+== forbidden keywords (sorry/admit/axiom/native_decide):
+none
+CHECK_EXIT=0 after 1076 s
