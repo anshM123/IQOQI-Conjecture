@@ -13,7 +13,8 @@ for f in SchurHorn Construction Lemma5 STU \
          HookCert21 HookCert23 HookCert25 HookCert27 HookCert29 \
          HookCert31 HookCert33 HookCert35 HookCert37 HookCert39 \
          KirwanFree40 \
-         IntervalUnif KirwanFreeU Renewal CrossUnif KirwanFreeAllD ShortNonnegSmall; do
+         IntervalUnif KirwanFreeU Renewal CrossUnif KirwanFreeAllD ShortNonnegSmall \
+         DipoleUnif UnifFacts UnifAllN KirwanFreeFinal; do
   echo "== STUProof/$f.lean"
   lake env lean -o "$out/$f.olean" -i "$out/$f.ilean" "STUProof/$f.lean"
 done

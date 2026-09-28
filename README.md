@@ -9,18 +9,19 @@ Then there is a global unitary U on C^d ⊗ C^d such that **both** marginals of 
 
 Physically: correlations between two identical thermal systems can always be created at the minimal energy cost. Previously this was known only for d ≤ 4.
 
-> **Status (2026-09-28):** the conjecture is proved for **every dimension d without Kirwan's theorem**:
-> - an elementary, explicit proof whose reduction step is **machine-checked in Lean** (row 4 below);
-> - the remaining lemma is proved **for all n** on paper, with six one-parameter facts verified exactly by two independent computer methods (row 8);
-> - it is machine-checked in Lean with **no hypotheses at all for d ≤ 40**.
->
-> The Lean formalisation of the last lemma, which would make the all-d Lean proof hypothesis-free, is in progress.
+> **Status (2026-09-28): proved and MACHINE-CHECKED IN LEAN 4 FOR EVERY DIMENSION d, WITH NO HYPOTHESES.**
+> The theorem `STUProof.stu_exists_unconditional` (`lean/STUProof/KirwanFreeFinal.lean`) states the conjecture exactly as above for all d, all sorted energy vectors, and all 0 ≤ β' ≤ β, β > 0.
+> - The proof is elementary and explicit and does not use Kirwan's convexity theorem.
+> - Every lemma is formalised, including the analytic facts about ln 2 / alternating series, which are proved inside Lean for all K.
+> - The full project check passes: `lean/check.sh`, exit 0, independently re-run by us (`logs/lean_check_final_unconditional.log`).
+> - `#print axioms` shows only Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`), with no `sorry`, no added axioms and no `native_decide`.
 
 ## What is proved, and how strongly
 
 | # | statement | status | where |
 |---|---|---|---|
-| 1 | Conjecture for **every d ≤ 40**, no hypotheses | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/KirwanFree40.lean`, theorem `STUProof.stu_exists_le_40` |
+| 0 | **Conjecture for EVERY d, no hypotheses** | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/KirwanFreeFinal.lean`, theorem `STUProof.stu_exists_unconditional` |
+| 1 | Conjecture for every d ≤ 40, no hypotheses (via certified hook decompositions; superseded by #0) | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/KirwanFree40.lean`, theorem `STUProof.stu_exists_le_40` |
 | 2 | Conjecture for **every d**, assuming Kirwan's convexity theorem (1984) in the symmetric form `KirwanSymmetricConvexity d` | machine-checked, conditional on that classical theorem | `lean/STUProof/STU.lean`, `STUProof.stu_exists` / `stu_exists_all` |
 | 3 | Conjecture for **every d**, assuming ONE explicit elementary inequality `XShortNonneg n lo hi`: an explicit rational n×n matrix X(n,lo,hi) is ≥ 0 on its short diagonals | machine-checked reduction; inequality proved in Lean for n ≤ 8 | `lean/STUProof/KirwanFreeAllD.lean`, `STUProof.stu_exists_all_of_shortNonneg`; `ShortNonnegSmall.lean` |
 | 4 | Conjecture for every d from **interval uniformisations** for all box sizes n ≤ d (`IntervalUnifAll n`) | machine-checked reduction | `lean/STUProof/KirwanFreeU.lean`, `STUProof.stu_exists_of_intervalUnif` |
@@ -31,7 +32,7 @@ Physically: correlations between two identical thermal systems can always be cre
 
 The strong form "every spectrum majorised by the initial one is reachable" is **false** for d ≥ 4; an explicit counterexample is given in `math/kirwan_route_all_d_REPORT.md`.
 
-**Remaining (in progress):** the Lean formalisation of #8, a finite algebraic argument plus elementary analysis of β(x) = Σ_{j≥0}(−1)^j/(x+j) (see `math/UNIF_all_n_PROOF.md`, §8 'Lean notes'). This will make the all-d Lean proof hypothesis-free. Item #3 (the cross construction X) is superseded by #8 and is kept as an alternative route.
+**Formalisation complete.** #8 is formalised in `lean/STUProof/DipoleUnif.lean`, `UnifFacts.lean` and `UnifAllN.lean` (theorem `intervalUnifAll_all`), which gives #0. What is *not* formalised is the standard reduction from a general Hermitian H, and from unsorted energies, to H = diag(E) with E sorted. Both are local-unitary conjugations.
 
 ## Verify it yourself
 
@@ -42,16 +43,16 @@ cd lean
 lake exe cache get      # downloads the prebuilt Mathlib (pinned revision 0df444a3...)
 bash check.sh           # elaborates every file in order, prints #print axioms, greps for sorry/admit/axiom/native_decide
 ```
-Expected result:
-- every main theorem prints `depends on axioms: [propext, Classical.choice, Quot.sound]`, which are Lean's three standard axioms;
+Expected result (our run: `logs/lean_check_final_unconditional.log`, exit 0 after 1573 s):
+- every main theorem, including `stu_exists_unconditional`, prints `depends on axioms: [propext, Classical.choice, Quot.sound]`, which are Lean's three standard axioms;
 - the keyword grep prints `none`.
 
 Our full run is in `logs/lean_check_full_run.log` (exit 0 after 1076 s). The checks were run inside the `formal-conjectures` Lake environment with Mathlib at the same pinned revision; `lean/lakefile.toml` reproduces that dependency.
 
-The statement being proved (from `KirwanFree40.lean`):
+The main theorem (from `KirwanFreeFinal.lean`):
 ```lean
-theorem stu_exists_le_40 {d : ℕ} (hd : d ≤ 40) (E : Fin d → ℝ) (hE : Monotone E) (β β' : ℝ)
-    (hβ : 0 < β) (hβ'0 : 0 ≤ β') (hβ'β : β' ≤ β) :
+theorem stu_exists_unconditional :
+    ∀ (d : ℕ) (E : Fin d → ℝ), Monotone E → ∀ β β' : ℝ, 0 < β → 0 ≤ β' → β' ≤ β →
     ∃ U ∈ unitaryGroup (Fin d × Fin d) ℂ,
       partialTraceB (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β' ∧
       partialTraceA (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β'
