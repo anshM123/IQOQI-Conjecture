@@ -7,10 +7,11 @@
 
 Then there is a global unitary U on C^d ⊗ C^d such that **both** marginals of U(τ_β ⊗ τ_β)U^† equal τ_{β'}.
 
-Physically: correlations between two identical thermal systems can always be created at the minimal energy cost. Previously this was known only for d ≤ 4.
+Physically: correlations between two identical thermal systems can always be created at the minimal energy cost. Previously this was known for d ≤ 4 (Bakhshinezhad et al. 2019) and, in every d, for equally spaced energy levels (Huber et al., New J. Phys. 17, 065008 (2015)).
 
 > **Status (2026-09-28): proved and MACHINE-CHECKED IN LEAN 4 FOR EVERY DIMENSION d, WITH NO HYPOTHESES.**
-> The theorem `STUProof.stu_exists_unconditional` (`lean/STUProof/KirwanFreeFinal.lean`) states the conjecture exactly as above for all d, all sorted energy vectors, and all 0 ≤ β' ≤ β, β > 0.
+> The theorem `STUProof.stu_exists_hermitian` (`lean/STUProof/GeneralH.lean`) states the conjecture exactly as above. It covers every d, every Hermitian H on ℂ^d, and all 0 ≤ β' ≤ β with β > 0. The thermal state is τ_β(H) = e^{−βH}/Tr e^{−βH}, using Mathlib's matrix exponential.
+> It is derived from `STUProof.stu_exists_unconditional` (`lean/STUProof/KirwanFreeFinal.lean`), which is the same statement for H = diag(E) with sorted E.
 > - The proof is elementary and explicit and does not use Kirwan's convexity theorem.
 > - Every lemma is formalised, including the analytic facts about ln 2 / alternating series, which are proved inside Lean for all K.
 > - The full project check passes: `lean/check.sh`, exit 0, independently re-run by us (`logs/lean_check_final_unconditional.log`).
@@ -20,7 +21,7 @@ Physically: correlations between two identical thermal systems can always be cre
 
 | # | statement | status | where |
 |---|---|---|---|
-| 0 | **Conjecture for EVERY d, no hypotheses** | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/KirwanFreeFinal.lean`, theorem `STUProof.stu_exists_unconditional` |
+| 0 | **Conjecture for EVERY d and EVERY Hermitian H, no hypotheses** | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/GeneralH.lean`, theorem `STUProof.stu_exists_hermitian`, from `lean/STUProof/KirwanFreeFinal.lean`, theorem `STUProof.stu_exists_unconditional` (H = diag(E), E sorted) |
 | 1 | Conjecture for every d ≤ 40, no hypotheses (via certified hook decompositions; superseded by #0) | **machine-checked (Lean 4 + Mathlib)** | `lean/STUProof/KirwanFree40.lean`, theorem `STUProof.stu_exists_le_40` |
 | 2 | Conjecture for **every d**, assuming Kirwan's convexity theorem (1984) in the symmetric form `KirwanSymmetricConvexity d` | machine-checked, conditional on that classical theorem | `lean/STUProof/STU.lean`, `STUProof.stu_exists` / `stu_exists_all` |
 | 3 | Conjecture for **every d**, assuming ONE explicit elementary inequality `XShortNonneg n lo hi`: an explicit rational n×n matrix X(n,lo,hi) is ≥ 0 on its short diagonals | machine-checked reduction; inequality proved in Lean for n ≤ 8 | `lean/STUProof/KirwanFreeAllD.lean`, `STUProof.stu_exists_all_of_shortNonneg`; `ShortNonnegSmall.lean` |
@@ -30,18 +31,19 @@ Physically: correlations between two identical thermal systems can always be cre
 | 7 | Hook Decomposition Lemma HD(n) (a stronger combinatorial statement that also implies #4) for all n ≤ 102 | Doubling Lemma HD(M) ⇒ HD(2M) machine-checked; exact certificates for odd n ≤ 101 | `lean/STUProof/HookDoubling.lean`, `math/`, `logs/` |
 | 8 | **`IntervalUnifAll n` for EVERY n**, via an explicit one-dipole construction. Together with #4 this gives the **conjecture for every d, without Kirwan** | **complete paper proof**. The only computer inputs are six one-parameter facts F1–F6 (about a(K) = 4K²(−1)^K(ln 2 − Σ_{i≤K}(−1)^{i−1}/i) + 1 − 2K), verified exactly by two independent methods; the construction is also exact-checked for all intervals n ≤ 170 and sampled up to n = 4000 | `math/UNIF_all_n_PROOF.md`, `code/verify_facts.py`, `code/coord_facts.py`, `logs/unif_all_n_*` |
 
-The strong form "every spectrum majorised by the initial one is reachable" is **false** for d ≥ 4; an explicit counterexample is given in `math/kirwan_route_all_d_REPORT.md`.
+The strong form "every spectrum majorised by the initial one is reachable" is **false** for every d ≥ 4. An explicit family with a proof for all d ≥ 4 is in `math/kirwan_route_all_d_REPORT.md` (corrected 2026-09-28: the family first given there covers only 4 ≤ d ≤ 8).
 
-**Formalisation complete.** #8 is formalised in `lean/STUProof/DipoleUnif.lean`, `UnifFacts.lean` and `UnifAllN.lean` (theorem `intervalUnifAll_all`), which gives #0. What is *not* formalised is the standard reduction from a general Hermitian H, and from unsorted energies, to H = diag(E) with E sorted. Both are local-unitary conjugations.
+**Formalisation complete.** #8 is formalised in `lean/STUProof/DipoleUnif.lean`, `UnifFacts.lean` and `UnifAllN.lean` (theorem `intervalUnifAll_all`), which gives `stu_exists_unconditional`. The reduction from a general Hermitian H to H = diag(E) with E sorted is also formalised (`lean/STUProof/GeneralH.lean`: spectral theorem, sorting permutation, covariance of e^{−βH} under unitary conjugation, local unitaries V ⊗ V), which gives #0.
 
 ## Verify it yourself
 
-### Lean (items 1–4, 7)
-Requirements: [elan](https://github.com/leanprover/elan) (toolchain `leanprover/lean4:v4.33.1` is picked up from `lean/lean-toolchain`), about 7 GB RAM, about 20 minutes.
+### Lean (items 0–4, 7)
+Requirements: [elan](https://github.com/leanprover/elan) (toolchain `leanprover/lean4:v4.33.1` is picked up from `lean/lean-toolchain`), about 7 GB RAM, about 26 minutes (our run: 1573 s).
 ```bash
 cd lean
 lake exe cache get      # downloads the prebuilt Mathlib (pinned revision 0df444a3...)
 bash check.sh           # elaborates every file in order, prints #print axioms, greps for sorry/admit/axiom/native_decide
+bash check_genh.sh      # then: the general-Hermitian-H theorem (GeneralH.lean, AxiomsGenH.lean), about 1 minute
 ```
 Expected result (our run: `logs/lean_check_final_unconditional.log`, exit 0 after 1573 s):
 - every main theorem, including `stu_exists_unconditional`, prints `depends on axioms: [propext, Classical.choice, Quot.sound]`, which are Lean's three standard axioms;
@@ -57,7 +59,19 @@ theorem stu_exists_unconditional :
       partialTraceB (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β' ∧
       partialTraceA (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β'
 ```
-Here H = diag(E) with sorted energies. Sorting the energies and diagonalising a general H are local-unitary reductions.
+Here H = diag(E) with sorted energies. The basis-free form, from `GeneralH.lean` (our re-check: `logs/lean_check_general_H.log`), is:
+```lean
+def thermalState {n : Type*} [Fintype n] [DecidableEq n] (H : Matrix n n ℂ) (β : ℝ) :
+    Matrix n n ℂ :=
+  (1 / (NormedSpace.exp ((-β) • H)).trace) • NormedSpace.exp ((-β) • H)
+
+theorem stu_exists_hermitian {d : ℕ} (H : Matrix (Fin d) (Fin d) ℂ) (hH : H.IsHermitian)
+    (β β' : ℝ) (hβ : 0 < β) (h0 : 0 ≤ β') (h1 : β' ≤ β) :
+    ∃ U ∈ unitaryGroup (Fin d × Fin d) ℂ,
+      partialTraceB (U * (thermalState H β ⊗ₖ thermalState H β) * star U) = thermalState H β' ∧
+      partialTraceA (U * (thermalState H β ⊗ₖ thermalState H β) * star U) = thermalState H β'
+```
+`thermalState_diag` shows that `thermalState (diagonal E) β = gibbsState E β`, so the two formulations agree.
 
 ### Exact certificates (items 5, 7)
 Python ≥ 3.10, standard library only. Run from `code/`:

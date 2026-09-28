@@ -33,8 +33,18 @@ Step 3 (Lemma 5 of 1904.07942, App. A.X; re-proved): spec τ_{β′} ∈ conv{v_
 Step 4: local unitaries rotate both marginals to τ_{β′}. ∎
 
 ## Additional results
-- The strong form "every q ≺ p is a reachable symmetric marginal of p⊗p" is FALSE for all d ≥ 4 (counterexample p = (1−δ−2ε, δ, ε, ε, …),
-  ε = 2δ², δ = 0.05, q = (p_0, rest averaged); von Neumann trace-inequality equality + Cauchy interlacing).
+- The strong form "every q ≺ p is a reachable symmetric marginal of p⊗p" is FALSE for all d ≥ 4.
+  **Corrected 2026-09-28.** The family originally written here (δ = 0.05 fixed, ε = 2δ², more ε's for larger d) proves this only for 4 ≤ d ≤ 8.
+  The key inequality fails for d ≥ 9. The following family works for EVERY d ≥ 4:
+  δ = 1/(5d), η = 2δ², p = (1−δ−(d−2)η, δ, η, …, η), s = 1−p_0, q = (p_0, s/(d−1), …, s/(d−1)) ≺ p.
+  For d = 4 it is p = (0.94, 0.05, 0.005, 0.005), q = (0.94, 0.02, 0.02, 0.02).
+  Proof:
+  1. After a local unitary, |0⟩ is the p_0-eigenvector of both marginals.
+  2. Ky Fan: Tr[(|0⟩⟨0|⊗1 + 1⊗|0⟩⟨0|)ρ] = 2p_0 = λ_1 + (λ_1+…+λ_{2d−1}). The gaps λ_1 > λ_2 and λ_{2d−1} > λ_{2d} force ρ = λ_1|00⟩⟨00| ⊕ ρ_O ⊕ ρ_R, with O = span{|0j⟩,|j0⟩} and Tr ρ_R = s².
+  3. The block of ρ_A on span{|j⟩: j ≥ 1} is Y + Z, with Y a compression of ρ_O and Z = Tr_B ρ_R. Weyl and Cauchy interlacing give
+     λ_3(Y+Z) ≤ p_0η + s² < 4δ² = 4δ/(5d) < s/(d−1).
+     This contradicts the flat target.
+  Full proof: the manuscript (Prop. "strong majorization form is false"). Exact check of the inequalities for 4 ≤ d ≤ 400.
 - S(p⊗p) can leave the majorisation polytope (d = 3 example p = (.4,.35,.25) reaches (.4075,.335,.2575)).
 - Earlier construction (C) with exact rational certificates for d = 5, 6, 7 (certs.py) remains independent confirmation.
 

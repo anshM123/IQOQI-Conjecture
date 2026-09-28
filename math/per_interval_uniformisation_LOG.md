@@ -35,7 +35,7 @@ all row sums R := ((hi+1)^2 - lo^2)/n.
   = average of the renewal difference and the uniform-window construction.  Rows = ((hi+1)^2-lo^2)/n, run sums and
   X <= 1 hold by construction (proof: 3 lines); only X >= 0 is not proven (reduces to lo=0: renewal, hi=n-1: J-Ren).
 - verify_half.py: EXACT verification (integer-scaled rationals; renewal cell formula cross-checked vs block
-  construction c<=16; negative controls: pure renewal difference FAILS at (12,10,10) with -1/10, perturbed theta
+  construction c<=16; negative controls: pure renewal difference FAILS at (12,10,10) with -1/10 [note 2026-09-28: -1/10 occurs at cells (2,9),(9,2); the minimum entry is -677/4620 at (5,6),(6,5)], perturbed theta
   fails rows).  RESULT: all 0<=lo<=hi<n, n<=60: 37820 cases, 0 failures (verify_half_1_60.log);
   n = 61..76 in verify_half_61_76.log.
 - Margin: min entry of X on runs s<lo (hi<=n-2) ~ 2.1/n^2 (at the hook lo=hi=n-2), stable n=20..60

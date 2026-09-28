@@ -1,6 +1,6 @@
 # Proof: interval uniformisations exist for every n (UNIF(n, lo, hi) for all n)
 
-This is the last ingredient of the Kirwan-free proof of the STU conjecture in every dimension: with the machine-checked reduction `stu_exists_of_intervalUnif` (lean/STUProof/KirwanFreeU.lean) it gives symmetrically thermalizing unitaries in all dimensions without Kirwan's theorem. Status: complete paper proof; the only computer inputs are the one-parameter facts F1–F6, verified exactly by two independent methods (code/verify_facts.py and code/coord_facts.py). Lean formalisation in progress.
+This is the last ingredient of the Kirwan-free proof of the STU conjecture in every dimension: with the machine-checked reduction `stu_exists_of_intervalUnif` (lean/STUProof/KirwanFreeU.lean) it gives symmetrically thermalizing unitaries in all dimensions without Kirwan's theorem. Status: complete paper proof; the only computer inputs are the one-parameter facts F1–F6, verified exactly by two independent methods (code/verify_facts.py and code/coord_facts.py). Formalised in Lean: `intervalUnifAll_all` (lean/STUProof/UnifAllN.lean, with DipoleUnif.lean and UnifFacts.lean), which yields the hypothesis-free theorem `stu_exists_unconditional` (lean/STUProof/KirwanFreeFinal.lean).
 
 =====
 # THE PROOF: UNIF(n, lo, hi) FOR ALL n  (P-PROOF, 2026-09-28)
