@@ -53,7 +53,7 @@ The **Hook Decomposition Lemma** HD(n) gives all intervals at once (`intervalUni
 - the Doubling Lemma HD(M) ⇒ HD(2M) and HD(2^k·m) for m ≤ 40, all in Lean;
 - odd n ≤ 101 by exact certificates (two-dipole construction), outside Lean.
 
-## 5. The last lemma: CLOSED on paper (2026-09-28); Lean formalisation in progress
+## 5. The last lemma: CLOSED on paper and in Lean (2026-09-28)
 **Theorem** (`math/UNIF_all_n_PROOF.md`). `IntervalUnifAll n` holds for every n. For 1 ≤ lo ≤ hi ≤ n−2, with K = n−1−hi and M = n−lo, use the T/H/G construction with at most ONE dipole at level hi:
 - (C) 2hi ≤ n−1: no dipole (this is the renewal difference);
 - (D) hi = n−2: amplitude 2/7;
@@ -70,3 +70,5 @@ Earlier diagnostic facts, kept for reference:
 - The plain renewal difference fails only near the top of the box (K ≲ 0.74·n^{2/3}).
 - The mechanism is a parity mode of exact amplitude Δ_K = a(K)/2 = ½ − K + 2K²·Σ_{j≥0}(−1)^j/(K+1+j), which is about 1/(4(K+1)²).
 - Near the top, any construction has margin Θ(1/n²); the LP optimum is about 8.5/n² for hooks with lo = hi = n−2.
+
+**Lean:** formalised in `DipoleUnif.lean`, `UnifFacts.lean` and `UnifAllN.lean`, giving `intervalUnifAll_all : ∀ n, IntervalUnifAll n`. Combined with `stu_exists_of_intervalUnif`, it yields the hypothesis-free theorem `stu_exists_unconditional` for every dimension (`KirwanFreeFinal.lean`; full check exit 0, standard axioms only).

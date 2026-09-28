@@ -2,6 +2,7 @@ import STUProof.STU
 import STUProof.KirwanFree
 import STUProof.KirwanFree40
 import STUProof.ShortNonnegSmall
+import STUProof.KirwanFreeFinal
 
 /-! Axiom check for the main results (run after building the other files, see `check.sh`). -/
 
@@ -66,3 +67,34 @@ import STUProof.ShortNonnegSmall
 -- `XShortNonneg` for `n ≤ 8` (kernel check over `ℚ`)
 #print axioms STUProof.xShortNonneg_le_8
 #print axioms STUProof.stu_exists_le_8_of_unif
+
+-- one-dipole T/H/G construction (runs, rows, cells)
+#print axioms STUProof.thg_cells
+#print axioms STUProof.row_const_value
+#print axioms STUProof.dip_run
+#print axioms STUProof.dip_row_succ
+#print axioms STUProof.isIntervalUnif_dip
+
+-- analysis: β(x) as an alternating series, Lemma B, σ, a(K), ω, facts F1-F6 (all K)
+#print axioms STUProof.alt_rec_bounds
+#print axioms STUProof.betaF_bounds
+#print axioms STUProof.lemmaB
+#print axioms STUProof.sigmaF_bounds
+#print axioms STUProof.sigmaF_anti
+#print axioms STUProof.aF_eq_sigma
+#print axioms STUProof.omegaF_eq
+#print axioms STUProof.factF1
+#print axioms STUProof.factF2
+#print axioms STUProof.factF3
+#print axioms STUProof.factF4
+#print axioms STUProof.factF5
+#print axioms STUProof.factF6
+
+-- cases (C), (E), (D) and all interval uniformisations in every dimension
+#print axioms STUProof.caseC_cells
+#print axioms STUProof.caseE_cells
+#print axioms STUProof.caseD_cells
+#print axioms STUProof.intervalUnifAll_all
+
+-- the STU conjecture in every dimension, no hypotheses
+#print axioms STUProof.stu_exists_unconditional

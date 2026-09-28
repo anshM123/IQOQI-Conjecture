@@ -16,14 +16,21 @@ From the project root `formal-conjectures/`, with `C:\Users\anshm\.elan\bin` on 
 The script elaborates `SchurHorn`, `Construction`, `Lemma5`, `STU`, `KirwanFreeCore`,
 `KirwanFreeHook`, `HookCertificates`, `KirwanFree`, `HookDoubling`, `HookCertSplit`,
 `HookCert21`, `HookCert23`, …, `HookCert39`, `KirwanFree40`, `IntervalUnif`, `KirwanFreeU`,
-`Renewal`, `CrossUnif`, `KirwanFreeAllD`, `ShortNonnegSmall` (each `STUProof/<F>.lean`) in this
-order with `lake env lean` (writing each `.olean` to the git-ignored
-`.lake/build/lib/lean/STUProof/` so the next file can `import` it), then runs `Axioms.lean`
-(`#print axioms`) and greps for `sorry/admit/axiom/native_decide`. Total and peak RAM: see the
-P-LEAN-UNIF section (before P-LEAN-DBL: ~5 min, 4.8 GB). No repository file outside `STUProof/` is
-modified.
+`Renewal`, `CrossUnif`, `KirwanFreeAllD`, `ShortNonnegSmall`, `DipoleUnif`, `UnifFacts`,
+`UnifAllN`, `KirwanFreeFinal` (each `STUProof/<F>.lean`) in this order with `lake env lean`
+(writing each `.olean` to the git-ignored `.lake/build/lib/lean/STUProof/` so the next file can
+`import` it), then runs `Axioms.lean` (`#print axioms`) and greps for
+`sorry/admit/axiom/native_decide`. Total time and peak RAM: see the P-LEAN-FINAL section (before
+P-LEAN-DBL: ~5 min, 4.8 GB). No repository file outside `STUProof/` is modified.
 
 ## Status
+
+**UNCONDITIONAL IN EVERY DIMENSION (P-LEAN-FINAL):** `stu_exists_unconditional`
+(`KirwanFreeFinal.lean`) states the conjecture for every `d`, every monotone `E` and all
+`0 ≤ β' ≤ β`, `β > 0`, with no hypotheses. It combines `stu_exists_of_intervalUnif` (item 1 below)
+with `intervalUnifAll_all (n : ℕ) : IntervalUnifAll n` (one-dipole T/H/G construction, facts
+F1-F6 proved for all `K`). `#print axioms`: `[propext, Classical.choice, Quot.sound]`. See the last
+section.
 
 Two independent routes, both fully checked:
 
@@ -99,8 +106,9 @@ Two independent routes, both fully checked:
 
 ## Remaining / possible extensions
 
-- The only unproved input is `KirwanSymmetricConvexity d` (Kirwan 1984). It is used only in
-  `gibbs_mem_symMarginalSpectra`, and only for `w = p ⊗ p`.
+- Kirwan route: its only unproved input is `KirwanSymmetricConvexity d` (Kirwan 1984). It is used
+  only in `gibbs_mem_symMarginalSpectra`, and only for `w = p ⊗ p`. Since P-LEAN-FINAL the
+  conjecture is proved without it (`stu_exists_unconditional`, Kirwan-free route).
 - Statement uses `H = diag(E)` with `E` sorted increasingly (WLOG in physics). Not formalized:
   the reduction from an arbitrary Hermitian `H` (spectral theorem + `Matrix.exp_conj`) and from
   unsorted `E` (permutation); both are local-unitary conjugations handled by the Step-4 lemmas.
@@ -250,4 +258,82 @@ Notes:
   synthesis for `Decidable`; the inner cell condition is therefore a `def ShortOKQ` with an
   `inferInstanceAs` instance. `decide +kernel` then takes 36 s of kernel time at a peak of 6.4 GB.
 - No `native_decide`, no `sorry`; `#print axioms` of all new main theorems:
+  `[propext, Classical.choice, Quot.sound]`.
+
+
+## Every dimension, unconditionally (P-LEAN-FINAL), 2026-09-28 13:09–15:05
+
+Math: P-PROOF (`iqoqi/programs/proof/LOG.md`, "THE PROOF", Sections 1-8). This is the one-dipole
+T/H/G construction for `1 ≤ lo ≤ hi ≤ n-2`, with `K = n-1-hi` and `M = n-lo`. It is not the cross
+construction. Main results:
+
+    theorem intervalUnifAll_all (n : ℕ) : IntervalUnifAll n
+    theorem stu_exists_unconditional :
+        ∀ (d : ℕ) (E : Fin d → ℝ), Monotone E → ∀ β β' : ℝ, 0 < β → 0 ≤ β' → β' ≤ β →
+          ∃ U ∈ unitaryGroup (Fin d × Fin d) ℂ,
+            partialTraceB (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β' ∧
+            partialTraceA (U * (gibbsState E β ⊗ₖ gibbsState E β) * star U) = gibbsState E β'
+
+`stu_exists_unconditional` is `stu_exists_of_intervalUnif` (P-LEAN-UNIF) applied to
+`fun n _ => intervalUnifAll_all n`. It has no hypotheses.
+
+Final check 14:34–14:58: `bash STUProof/check.sh` exit code 0 (all 32 files, no errors or
+warnings, empty stderr). 1437 s wall (~24 min), one Lean process at a time. Peak RAM 6.33 GB
+(`ShortNonnegSmall.lean`); in separate runs the new files peaked at ≤ 3.92 GB. All 67 `#print axioms` lines are
+`[propext, Classical.choice, Quot.sound]`, including `stu_exists_unconditional`. The grep for
+`sorry/admit/axiom/native_decide` finds none.
+
+Files (new; no existing statement changed):
+
+| file | content |
+|---|---|
+| `DipoleUnif.lean` | Generic T/H/G matrix `thgU n T H G`: symmetry, zero outside the box, run recurrence `R(s) - R(s+2)` (`thg_run_rec`, `thg_run_top`, `thg_run_top2`, `thg_run_high`; Lemmas 1.1-1.2), row shift identity (`thg_row_succ`; Lemma 1.3), `0 ≤ U ≤ 1` from 1-D conditions (`thg_cells`; Lemma 1.4). Mass count `row_const_value`: a constant row sum equals `∑_{a ∈ [lo,hi]} (2a+1)/n`. Dipole data `qPart`, `dipQ`, `dipTau`, `dipT`, `dipH`, `dipG`, `dipU`; `dip_run`, `dip_row_succ`, `isIntervalUnif_dip` |
+| `UnifFacts.lean` | `betaF`, `alt_rec_bounds(2)` (Lemma 3.1), `lemmaB` (Lemma 3.3), `sigmaF` (Lemma 3.2), `aF`, `omegaF`, `wF`, `omegaF_eq`, `factF1`-`factF6` |
+| `UnifAllN.lean` | `Φ` (`dipPhi`), alternating part `dipS`, `dipS_base`/`dipS_succ` (Lemma 4.1 as a recursion); cases `caseC_cells`, `caseC_K1_cells`, `alphaStar_bounds`, `caseE_cells_gen`/`caseE_cells`, `caseD_cells`; `intervalUnifAll_all` |
+| `KirwanFreeFinal.lean` | `stu_exists_unconditional` |
+
+The facts as proved, with `a(K) = 4K²β(K+1) + 1 - 2K` and `w(K) = (-1)^K ω(K+1)`:
+- F1: `0 < a(K)` for all `K`. F2: `a(K+1) < a(K)` for all `K`.
+- F3 (`K ≥ 2`): `a(K) + a(K+1) ≤ 1/(2(K+1))`.
+- F4 (`K ≥ 2`): `0 < w(K)` and `(K+1)(a(K)+a(K+1)) ≤ 4 w(K)`.
+- F5: `a(1) - 2/21 - a(3) > 0`, `a(1) - 2/21 + a(2) ≤ 2/7`, `a(1) < 5/21`.
+- F6: `a(1) < 1/4`, `a(3) < 1/20`.
+
+Notes:
+- `τ`. It is *defined* by the pair-sum recursion `τ(0) = 0`,
+  `τ(x+1) = Q(x+1)/((x+1)x) - τ(x)`, in `x = n - s` coordinates. The run equations are proved from
+  it; uniqueness is not needed.
+  * `Q = qPart K - qPart M + 2(K+1)α[K+2 ≤ x ≤ 2K+2]`, with `qPart L x = [x ≥ L+1](2x(x-1) - 2L²)`.
+  * `T(s) = τ(n-s)`, `H(u) = T(u) - α[u = hi]`, `G(u) = α[u ≤ 2hi-n-1]`.
+  * Runs and rows hold for every `α` with `α = 0 ∨ n ≤ 2hi` (`isIntervalUnif_dip`). The cells
+    reduce to two 1-D conditions on `τ`.
+  * Rows. `thg_row_succ` shows that consecutive rows are equal. `row_const_value` then gets the
+    value from the run totals, so no row sum is computed directly.
+- Closed form (Lemma 4.1/Cor 4.2). It is used in recursive form:
+  `s = τ - Φ`, `s(K+1) = a(K)`, `s(x+1) = -s(x) + b(x+1) - [x = M] a(M)`. Solved per case:
+  * (C): `dipS_C`, `α = 0`.
+  * (E): `dipS_E`, `s = tail - [x ≤ M](-1)^(x+M) a(M)` with `α = α*`.
+  * (D): `dipS_D`, `α = 2/7`, `x ≥ 4`.
+- Case split in `intervalUnifAll_all`:
+  * `lo = 0`: renewal square, or `J` if `hi = n-1`.
+  * `hi = n-1`, `lo ≥ 1`: complement of a renewal square.
+  * Otherwise, `n ≤ 2K+1`: (C) with `α = 0`. The case `K = 1` (only `n = 3`, `lo = hi = 1`) is
+    `caseC_K1_cells`.
+  * `K = 1`, `n ≥ 4`: (D).
+  * `K ≥ 2`, `n ≥ 2K+2`: (E).
+- Analysis. `β(x) = ∑_{j≥0} (-1)^j/(x+j)` is the `limUnder` of its partial sums. Convergence comes
+  from Mathlib's alternating series test (`Antitone.tendsto_alternating_series_of_tendsto_zero`),
+  and `0 ≤ β(x) ≤ 1/x` from the partial-sum bounds. `log 2` never enters.
+  * Lemma B: `u(x) - ε(x) ≤ β(x) ≤ u(x)`, with `u(x) = 1/(2x) + 1/(4x²) - 1/(8x⁴) + 1/(4x⁶)` and
+    `ε(x) = (17x⁴+34x³+29x²+12x+2)/(8x⁶(x+1)⁶)`. Since `u(x) + u(x+1) - 1/x = ε(x)`, this is
+    Lemma 3.1 for `f = u - β`.
+- F1-F4 for all `K`. Lemma B is substituted, then each fact is written as `expr = N/D`
+  (`field_simp; ring`, lemmas `poly_F*`). All coefficients of the numerator are positive, as a
+  polynomial in `K` (F1, F2) or in `k = K - 2` (F3, F4). `positivity` closes each fact, so no
+  numerics are needed for large `K`. F5 and F6 use Lemma B at `x = 2, 3, 4` only
+  (`aF_one_bounds`, `aF_two_bounds`, `aF_three_bounds`).
+- `caseE_cells_gen` and `caseD_cells` use `set_option maxHeartbeats 1000000 in` (large `linarith`
+  case splits); everything else uses the defaults.
+- No `native_decide`, no `sorry`. `#print axioms` of `stu_exists_unconditional`,
+  `intervalUnifAll_all`, `isIntervalUnif_dip`, `lemmaB`, `factF1`-`factF6` and the case lemmas:
   `[propext, Classical.choice, Quot.sound]`.
