@@ -1,0 +1,5 @@
+n=500: 200 intervals (incl. K=1..20 near-top, boundary n=2K+2/2K+1, random) exact fast check: failures [] (1.0s)
+n=1000: 200 intervals (incl. K=1..20 near-top, boundary n=2K+2/2K+1, random) exact fast check: failures [] (2.4s)
+n=1001: 200 intervals (incl. K=1..20 near-top, boundary n=2K+2/2K+1, random) exact fast check: failures [] (2.5s)
+n=2000: 200 intervals (incl. K=1..20 near-top, boundary n=2K+2/2K+1, random) exact fast check: failures [] (12.3s)
+n=3001: 200 intervals (incl. K=1..20 near-top, boundary n=2K+2/2K+1, random) exact fast check: failures [] (29.0s)

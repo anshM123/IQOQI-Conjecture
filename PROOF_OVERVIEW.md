@@ -53,10 +53,20 @@ The **Hook Decomposition Lemma** HD(n) gives all intervals at once (`intervalUni
 - the Doubling Lemma HD(M) ⇒ HD(2M) and HD(2^k·m) for m ≤ 40, all in Lean;
 - odd n ≤ 101 by exact certificates (two-dipole construction), outside Lean.
 
-## 5. The remaining gap (for an unconditional all-d Lean proof)
-It suffices to prove, for all n, **either** `XShortNonneg n lo hi` **or** the 1-D cell inequalities of the dipole construction with an explicit amplitude rule. Known structure:
-- Where D_ren fails, it fails only near the top of the box: K_P = n−1−hi ≲ 0.74·n^{2/3} and lo ≳ 0.53n.
-- The failure mechanism is a parity mode with exact amplitude Δ_K = ½ − K + 2K²·Σ_{j≥0}(−1)^j/(K+1+j), which is about 1/(2(K+1)²). It comes from the formula Ψ(p) = K²/(n−p+1) + c_par − 2K²·Σ_{q=K+1}^{n−p}(−1)^{n−p−q}/q.
-- Any construction has an optimal margin Θ(1/n²) near the top (LP optimum ≈ 8.5/n² for hooks lo = hi = n−2). So a proof must be exact to second order there.
+## 5. The last lemma: CLOSED on paper (2026-09-28); Lean formalisation in progress
+**Theorem** (`math/UNIF_all_n_PROOF.md`). `IntervalUnifAll n` holds for every n. For 1 ≤ lo ≤ hi ≤ n−2, with K = n−1−hi and M = n−lo, use the T/H/G construction with at most ONE dipole at level hi:
+- (C) 2hi ≤ n−1: no dipole (this is the renewal difference);
+- (D) hi = n−2: amplitude 2/7;
+- (E) K ≥ 2: amplitude α* = (a(K) − (−1)^{K+M} a(M))/(2(−1)^K ω(K+1)). This kills the bulk parity mode exactly.
 
-The working logs in `math/` contain all partial results, negative results and conjectures, including the WP odd-step reduction, the two-token (T/H/G) construction, the canonical-delta and two-dipole hook decompositions, and the product lemma.
+The proof has three parts:
+- **Runs and rows** hold for any amplitude (level lemma and dipole identity).
+- **In x = n−s coordinates** the run recursion becomes a first-order recursion on pair sums, with the exact closed form τ(x) = Φ(x) + (−1)^x e(x).
+- **All cell bounds** reduce to six one-parameter facts F1–F6 about a(K) and ω. These are verified exactly by two independent methods:
+  - rational interval checks for small K plus polynomial coefficient positivity for K ≥ 10 (`code/verify_facts.py`);
+  - 100-digit interval arithmetic for K ≤ 60 plus a 5-term asymptotic bound with Sturm root counting for K ≥ 60 (`code/coord_facts.py`).
+
+Earlier diagnostic facts, kept for reference:
+- The plain renewal difference fails only near the top of the box (K ≲ 0.74·n^{2/3}).
+- The mechanism is a parity mode of exact amplitude Δ_K = a(K)/2 = ½ − K + 2K²·Σ_{j≥0}(−1)^j/(K+1+j), which is about 1/(4(K+1)²).
+- Near the top, any construction has margin Θ(1/n²); the LP optimum is about 8.5/n² for hooks with lo = hi = n−2.

@@ -1,0 +1,13 @@
+Lemma B: eps identity True; eps numerator positive coeffs True; eps(x)-eps(x+1) = (17*x**4 + 68*x**3 + 100*x**2 + 64*x + 16)/(x**6*(x + 1)*(x + 2)**6): num/den positive coeffs True
+omega identity check k=1..60 (interval contains exact omega): True
+small K = 1..11: F1, F2 (K>=1), F3, F4 (K>=2) exact interval checks: True
+  K >= 10: F1  a(K) > 0: denominator>0 True, numerator>=0 True  (deg num 5)
+  K >= 10: F2  a(K) - a(K+1) > 0: denominator>0 True, numerator>=0 True  (deg num 4)
+  K >= 10: F3  1/(2(K+1)) - a(K) - a(K+1) >= 0: denominator>0 True, numerator>=0 True  (deg num 12)
+  K >= 10: F4a (K odd)  w > 0: denominator>0 True, numerator>=0 True  (deg num 10)
+  K >= 10: F4b (K odd)  4w/(K+1) - a(K) - a(K+1) >= 0: denominator>0 True, numerator>=0 True  (deg num 10)
+  K >= 10: F4c (K even) w > 0: denominator>0 True, numerator>=0 True  (deg num 11)
+  K >= 10: F4d (K even) 4w/(K+1) - a(K) - a(K+1) >= 0: denominator>0 True, numerator>=0 True  (deg num 16)
+F5 (K=1, alpha=2/7): (i) a1-2/21-a3>0 True [value >= 0.085472], (ii) a1-2/21+a2<=2/7 True [slack >= 0.063186], (iii) a1<5/21 True [slack >= 0.010684];  F6 a3<1/20, a1<1/4: True
+   enclosures: a(1) in [0.227411277760,0.227411277760], a(2) in [0.090354888959,0.090354888959], a(3) in [0.046701499842,0.046701499842]
+ALL FACTS VERIFIED: True
