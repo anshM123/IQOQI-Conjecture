@@ -1,0 +1,48 @@
+OK   beta digamma formula = alternating series (x = 1..20)
+OK   beta(1) = ln 2
+OK   beta(x)+beta(x+1) = 1/x, x = 1..500
+OK   0 <= beta(x) <= 1/x, x = 1..500
+OK   Lemma B: u - eps <= beta <= u for x = 1..3000
+OK   beta(m+1) = (-1)^m (ln 2 - h_m), m = 0..60
+OK   a(1) = 3 - 4 ln 2
+OK   a(2) = 16 ln 2 - 11
+OK   a(3) = 25 - 36 ln 2
+   a(1) = 0.227411277760219  a(2) = 0.090354888959125  a(3) = 0.0467014998419689
+OK   sigma(x)+sigma(x+1) = 2/(x(x+1)), x=1..500
+OK   1/(x(x+1)) <= sigma(x) <= (x+4)/(x(x+1)(x+2)), x = 1..3000
+OK   sigma strictly decreasing, x = 1..3000
+OK   sigma(4) <= 1/15, sigma(5) <= 3/70 (Lemma bounds, case D)
+OK   a(K) = 2/(K+1) - 1 + K^2 sigma(K+1), K = 0..500
+OK   a(M) = 1 - M^2 sigma(M), M = 1..500
+OK   M^2 sigma(M+1) <= 1 - 1/(M+1), M = 1..3000
+OK   F1: a(K) > 0, K = 0..3000
+OK   F2: a(K+1) < a(K), K = 0..3000
+OK   F3: a(K)+a(K+1) <= 1/(2(K+1)), K = 2..3000
+OK   F3 fails at K = 1 (so K >= 2 is needed): a(1)+a(2) > 1/4
+OK   F4: w(K) > 0, K = 2..1200
+OK   F4: (K+1)(a(K)+a(K+1)) <= 4 w(K), K = 2..1200
+OK   F5: a(1) - 2/21 - a(3) > 0
+OK   F5: a(1) - 2/21 + a(2) <= 2/7
+OK   F5: a(1) < 5/21
+OK   F6: a(1) < 1/4 and a(3) < 1/20
+   F5 slacks: 0.0854717 0.0631862 0.010684
+OK   Cor: a(K) < 1/(2(K+1)), K = 1..3000
+   a(K)(K+1)^2 at K = 10, 100, 1000, 3000: ['0.59338037', '0.50994803', '0.5009995', '0.50033328']
+OK   omega(k) = (-1)^k (2k beta(k+1) - 1) + 2k beta(2k) - 1/2, k = 1..300
+   omega(2), omega(3), omega(4) = -1/6 1/5 -19/210 ; w(2), w(3) = 1/5 19/210
+   exact enclosure a(1) in [0.22702332, 0.23437500]  (true 0.2274112778)
+   exact enclosure a(2) in [0.09016927, 0.09190672]  (true 0.09035488896)
+   exact enclosure a(3) in [0.04662400, 0.04711914]  (true 0.04670149984)
+OK   Lean aF_one_bounds: 0.227 < a(1)-enclosure < 0.2344
+OK   Lean aF_two_bounds: 0.0901 < a(2)-enclosure < 0.092
+OK   Lean aF_three_bounds: 0.0466 < a(3)-enclosure < 0.0472
+OK   F5 from decimals: a1l - 2/21 - a3h > 0
+OK   F5 from decimals: a1h - 2/21 + a2h <= 2/7
+OK   F5 from decimals: a1h < 5/21
+OK   F6 from decimals: a1h < 1/4, a3h < 1/20
+   slacks from decimals: 0.08456190476190477 0.05455238095238095 0.003695238095238095
+OK   0 < alpha*(K,M) <= 2/(K+1) for 2<=K<=150, K+1<=M<=K+150
+   min relative slack (2/(K+1) - alpha*)(K+1): 0.34679772
+OK   A_ren + 2 alpha* omega(K+1) = 0 (K < 60)
+
+ALL NUMERIC FACT CHECKS PASSED

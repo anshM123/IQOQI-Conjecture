@@ -1,0 +1,104 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+\providecommand{\MRhref}[2]{\href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{10}
+
+\bibitem{BakhshinezhadEtAl2019}
+F.~Bakhshinezhad, F.~Clivaz, G.~Vitagliano, P.~Erker, A.~T. Rezakhani,
+  M.~Huber, and N.~Friis, \emph{Thermodynamically optimal creation of
+  correlations}, J. Phys. A: Math. Theor. \textbf{52} (2019), 465303,
+  arXiv:1904.07942.
+
+\bibitem{Bhatia1997}
+R.~Bhatia, \emph{Matrix analysis}, Graduate Texts in Mathematics, vol. 169,
+  Springer, New York, 1997.
+
+\bibitem{BruschiEtAl2015}
+D.~E. Bruschi, M.~Perarnau-Llobet, N.~Friis, K.~V. Hovhannisyan, and M.~Huber,
+  \emph{The thermodynamics of creating correlations: Limitations and optimal
+  protocols}, Phys. Rev. E \textbf{91} (2015), 032118, arXiv:1409.4647.
+
+\bibitem{ChanLi1983}
+N.~N. Chan and K.-H. Li, \emph{Diagonal elements and eigenvalues of a real
+  symmetric matrix}, J. Math. Anal. Appl. \textbf{91} (1983), 562--566.
+
+\bibitem{ChristandlMitchison2006}
+M.~Christandl and G.~Mitchison, \emph{The spectra of quantum states and the
+  {K}ronecker coefficients of the symmetric group}, Comm. Math. Phys.
+  \textbf{261} (2006), 789--797.
+
+\bibitem{Clivaz2020}
+F.~Clivaz, \emph{Optimal manipulation of correlations and temperature in
+  quantum thermodynamics}, Ph.D. thesis, Universit\'e de Gen\`eve, 2020,
+  doi:10.13097/archive-ouverte/unige:145933, arXiv:2012.04321.
+
+\bibitem{DaftuarHayden2005}
+S.~Daftuar and P.~Hayden, \emph{Quantum state transformations and the
+  {S}chubert calculus}, Ann. Physics \textbf{315} (2005), 80--122.
+
+\bibitem{deMouraUllrich2021}
+L.~de~Moura and S.~Ullrich, \emph{The {L}ean 4 theorem prover and programming
+  language}, Automated Deduction -- {CADE} 28, Lecture Notes in Computer
+  Science, vol. 12699, Springer, Cham, 2021, pp.~625--635.
+
+\bibitem{Horn1954}
+A.~Horn, \emph{Doubly stochastic matrices and the diagonal of a rotation
+  matrix}, Amer. J. Math. \textbf{76} (1954), 620--630.
+
+\bibitem{HuberEtAl2015}
+M.~Huber, M.~Perarnau-Llobet, K.~V. Hovhannisyan, P.~Skrzypczyk, C.~Kl{\"o}ckl,
+  N.~Brunner, and A.~Ac{\'\i}n, \emph{Thermodynamic cost of creating
+  correlations}, New J. Phys. \textbf{17} (2015), 065008, arXiv:1404.2169.
+
+\bibitem{STUrepo}
+\emph{{IQOQI-Conjecture}: {L}ean~4 formalisation of the existence of
+  symmetrically thermalizing unitaries},
+  \url{https://github.com/anshM123/IQOQI-Conjecture}, 2026, Lean library
+  \texttt{STUProof}.
+
+\bibitem{JevticJenningsRudolph2012}
+S.~Jevtic, D.~Jennings, and T.~Rudolph, \emph{Maximally and minimally
+  correlated states attainable within a closed evolving system}, Phys. Rev.
+  Lett. \textbf{108} (2012), 110403, arXiv:1110.2371.
+
+\bibitem{Kirwan1984}
+F.~Kirwan, \emph{Convexity properties of the moment mapping, {III}}, Invent.
+  Math. \textbf{77} (1984), 547--552.
+
+\bibitem{Klyachko2004}
+A.~A. Klyachko, \emph{Quantum marginal problem and representations of the
+  symmetric group}, arXiv:quant-ph/0409113, 2004.
+
+\bibitem{MarshallOlkinArnold2011}
+A.~W. Marshall, I.~Olkin, and B.~C. Arnold, \emph{Inequalities: Theory of
+  majorization and its applications}, second ed., Springer Series in
+  Statistics, Springer, New York, 2011.
+
+\bibitem{McKayEtAl2018}
+E.~McKay, N.~A. Rodr{\'\i}guez-Briones, and E.~Mart{\'\i}n-Mart{\'\i}nez,
+  \emph{Fluctuations of work cost in optimal generation of correlations},
+  Phys. Rev. E \textbf{98} (2018), 032132, arXiv:1805.11106.
+
+\bibitem{PuszWoronowicz1978}
+W.~Pusz and S.~L. Woronowicz, \emph{Passive states and {KMS} states for
+  general quantum systems}, Comm. Math. Phys. \textbf{58} (1978), 273--290.
+
+\bibitem{Schur1923}
+I.~Schur, \emph{{\"U}ber eine {K}lasse von {M}ittelbildungen mit {A}nwendungen
+  auf die {D}eterminantentheorie}, Sitzungsber. Berl. Math. Ges. \textbf{22}
+  (1923), 9--20.
+
+\bibitem{mathlib2020}
+{The mathlib Community}, \emph{The {L}ean mathematical library}, Proceedings of
+  the 9th {ACM} {SIGPLAN} International Conference on Certified Programs and
+  Proofs ({CPP} 2020), ACM, New York, 2020, pp.~367--381.
+
+\bibitem{VitaglianoEtAl2019}
+G.~Vitagliano, C.~Kl{\"o}ckl, M.~Huber, and N.~Friis, \emph{Trade-off between
+  work and correlations in quantum thermodynamics}, Thermodynamics in the
+  Quantum Regime (F.~Binder, L.~A. Correa, C.~Gogolin, J.~Anders, and
+  G.~Adesso, eds.), Fundamental Theories of Physics, vol. 195, Springer, Cham,
+  2019, arXiv:1803.06884, pp.~731--750.
+
+\end{thebibliography}

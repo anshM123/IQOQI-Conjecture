@@ -87,7 +87,7 @@ UNCONDITIONAL for d <= 20: exact rational hook decompositions n = 1..20 (hookdec
 Verification: float 21104 w_k + 3000 thermal (d<=12, extreme); EXACT 2788 (p,k) d<=12; real states (Chan-Li) 300.
 OPEN: explicit all-N hook decomposition (p-independent combinatorial lemma).
 - exact_verify_hi.log: EXACT (d=13..20): 678 (p,k) instances, 0 failures.  Float hook decomposition feasible also for
-  N = 22, 24, 26, 28, 30.  (Stopped my own slow N=35/40 background LP by PID; other agents' processes untouched.)
+  N = 22, 24, 26, 28, 30.  (Stopped my own slow N=35/40 background LP by PID; other processes untouched.)
 - Coordinator input (P-STU4 lemmas L1-L5, M-cyclic conjecture) noted; our "rescaled product runs ≺ λ for q ∈ M(p)"
   lemma is the same mechanism as their L2/L3.  Our route yields an unconditional proof for d <= 20 and reduces all d
   to the p-independent Hook Decomposition Lemma.

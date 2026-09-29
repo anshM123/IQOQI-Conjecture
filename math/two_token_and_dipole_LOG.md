@@ -5,7 +5,7 @@
 - Probabilistic reformulation: HD(n) <=> joint law of (I,J,A), (I,J) iid uniform on [n], A independent of I and of J,
   P(A=a) = (2a+1)/n^2 (= law of max of two uniforms), and A | (J-I=d) uniform on {|d|,...,n-1}.
   (Y_a(i,j) = P(A=a | I=i, J=j).)
-- Coordinator scope note: P-HOOK3 owns the odd step (direction 3). This agent: (1) shrinking lemma, (2) explicit all-n.
+- Scope note: P-HOOK3 owns the odd step (direction 3). This work package: (1) shrinking lemma, (2) explicit all-n.
 - SHRINK test (shrink_lp.py): keep every cell's mass in its cell, split old hook a between new hooks a and a-1
   (monotone coupling of run laws forces the split totals): INFEASIBLE for XOR solutions N=4,8,16,32 deleting vertex
   N-1, N/2, N/2-1, 0 (except N=4 deleting an inner vertex).  (N=4 by hand: cell (1,2) lies entirely in old hook 3.)

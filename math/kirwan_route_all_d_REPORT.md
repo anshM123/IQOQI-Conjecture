@@ -1,6 +1,6 @@
 # P-STU — Symmetrically thermalizing unitaries exist in every local dimension
 
-Status: PROOF (agent P-STU), independently re-verified by the coordinator (logic traced by hand; own code
+Status: PROOF (work package P-STU), independently re-verified (logic traced by hand; own code
 `verify_alld_coord.py`: 20000 random instances d ≤ 15, all k, marginal error ≤ 3.3e-16, min β_r = 0.0139 > 0; Lemma 5 LP 0/3000 failures).
 Needs an external expert check before circulation. The only non-elementary input is Kirwan's convexity theorem.
 

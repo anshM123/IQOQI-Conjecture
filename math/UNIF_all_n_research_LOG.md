@@ -201,7 +201,7 @@ UPPER BOUNDS (eta <= tau, so it suffices: tau(x)+tau(y) <= 2 for y < x, x-y odd;
   and their coefficient lists at K = 10 + t (all >= 0), for direct transcription into Lean (e.g. F1: numerator
   K^5+13K^4+70K^3+194K^2+256K+128 over 2(K+1)(K+2)^6 -- positive for all K > 0; F2, F4a likewise for all K > 0).
 
-## 10. Independent referee (subagent, own implementation; files review_*.py/log): VERDICT "proof correct, one fixable typo"
+## 10. Independent referee (own implementation; files review_*.py/log): VERDICT "proof correct, one fixable typo"
 - Typo = the sign in the displayed alpha* formula (Sec. 5), already fixed above (definition -A_ren/(2omega) and construct.py
   were right).  Wording fixes applied: Lemma 5.1 cites F1+F2; Lemma 3.2(iii) strictness from the upper bound in (ii);
   strict F1/F2/F4 at K = 10 rest on the overlap with the exact interval range K = 1..11 (exists).

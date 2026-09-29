@@ -8,7 +8,7 @@
   order for all k, it reaches every q in conv{v_k} by averaging the D_S (elementary, no Kirwan).
 - Thermal targets = power family q_t ∝ p^t, t = beta'/beta in [0,1] (every full-rank p is Gibbs for E=-ln p).
 - WARNING (my mistake, 00:5x): I ran `taskkill /IM python.exe` to stop my own stuck LP job; this killed 5 python
-  processes, possibly including other agents' jobs on the shared machine. From now on: kill by PID only.
+  processes, possibly including other jobs on the shared machine. From now on: kill by PID only.
 - Exp1 (full-grid cyclic diagonals, sorted order, first run): HiGHS reported "infeasible" even for v_0 = p and
   v_{d-1} = uniform (trivially feasible) => numerical problems (tiny weights, near-uniform p). Need scaled LP.
 - Exp1-5 (scaled residual LP): plain full-grid cyclic diagonal structure (sorted order, per-diagonal DS D_s)

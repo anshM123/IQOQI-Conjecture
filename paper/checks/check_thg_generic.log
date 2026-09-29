@@ -1,0 +1,7 @@
+OK   L1 levels
+OK   L2 run recurrence and top runs (random rational T,H,G, n <= 15)
+OK   L3 row-shift identity (random rational T,H,G, n <= 15)
+OK   L4 constant rows equal ((hi+1)^2-lo^2)/n; total mass = sum_{a in [lo,hi]}(2a+1) (all intervals, n <= 16)
+OK   G-window identities (n < 60)
+
+ALL GENERIC T/H/G CHECKS PASSED

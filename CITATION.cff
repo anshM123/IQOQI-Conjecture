@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Symmetrically thermalizing unitaries exist in every dimension"
+type: software
+authors:
+  - family-names: Mishra
+    given-names: Ansh
+  - family-names: Senthilkumar
+    given-names: Aryan
+version: "1.0"
+date-released: "2026-09-28"
+license: MIT
+repository-code: "https://github.com/anshM123/IQOQI-Conjecture"
+keywords:
+  - "quantum thermodynamics"
+  - "symmetrically thermalizing unitaries"
+  - "quantum marginal problem"
+  - "majorization"
+  - "Lean 4"
+  - "formal verification"

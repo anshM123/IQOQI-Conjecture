@@ -1,0 +1,16 @@
+OK   R1 renewal closed form == block-reversal construction (n <= 24, all m <= n-2)
+OK   R2 renewal squares, J and complements are interval uniformisations (exact, n <= 30)
+OK   R3 min(i+j+2, 2n-i-j) = |i-j| + 2 + 2 min(i, j, n-1-i, n-1-j)  (n <= 40)
+OK   D1 T(s) = tau(n-s) equals the (RUN)-recursion T of the public checker (exact, n <= 30, all 1<=lo<=hi<=n-2)
+OK   D2 exact full-matrix check, ALL intervals of all boxes n <= 22 (counts {'A': 253, 'B': 231, 'C': 440, 'D': 209, 'E': 891})
+OK   D2b runs and rows hold for random rational alpha whenever 2hi >= n (exact, n <= 18)
+OK   D2c negative control: alpha = 1/3 with 2hi < n breaks constant rows in 110 cases (expected > 0)
+OK   D3 (CELL1),(CELL2) with exact alpha (mpmath 50 digits), all 17296 intervals 1<=lo<=hi<=n-2, n <= 48
+OK   D4 closed forms tau = Phi + s of cases (C), (D) [x>=4], (E), and tau = 0 on x <= K (n <= 40)
+OK   D5 the alpha = 0 T/H/G matrix equals U^hi_n - U^{lo-1}_n (n <= 20)
+OK   D6 case (D): tau(1) = 0, tau(2) = 1, tau(3) = 4/21 (M = 2) or 6/7 (M >= 3)
+OK   D6 case (C), (n,lo,hi) = (3,1,1): T = (0, 1, 0), Y = [[1/2,1/2,0],[1/2,0,1/2],[0,1/2,1/2]]
+OK   D7a float64 1-D cells, all intervals with K = n-1-hi <= 6, n <= 400 (min upper slack 1.259e-05)
+OK   D7b float64 1-D cells, 300 random intervals each for n = 600, 1001, 2000
+
+ALL CONSTRUCTION CHECKS PASSED

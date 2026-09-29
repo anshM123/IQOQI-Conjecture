@@ -1,0 +1,51 @@
+OK   Lemma B: u(x)+u(x+1)-1/x = eps(x)
+OK   Lemma B: eps(x)-eps(x+1) closed form
+OK   c(x)-c(x+1) = 4/(x(x+1)(x+2))
+OK   (c(x)-c(x+1)) - (c(x+1)-c(x+2)) = 12/(x(x+1)(x+2)(x+3)) >= 0
+OK   c/2 + dc/2 = (x+4)/(x(x+1)(x+2))
+OK   sigma decreasing: (x+2)(x+3) - x(x+5) = 6
+OK   a(K) = 2/(K+1) - 1 + K^2 sigma(K+1)
+OK   a(M) = 1 - M^2 sigma(M)
+OK   sigma(x)+sigma(x+1) = 2/(x(x+1))
+OK   M^2 (M+5)/((M+1)(M+2)(M+3)) = 1 - 1/(M+1) - 6M/(...)
+OK   omega identity k=1
+OK   omega identity k=2
+OK   omega identity k=3
+OK   omega identity k=4
+OK   omega identity k=5
+OK   omega identity k=6
+OK   omega identity k=7
+OK   omega identity k=8
+OK   omega identity k=9
+OK   omega identity k=10
+OK   omega identity k=11
+OK   omega identity k=12
+OK   poly_F1:  aLo(K) = P1n/P1d
+OK   poly_F2:  aLo(K) - aUp(K+1) = P2n/P2d
+OK   poly_F3:  1/(2(K+1)) - aUp(K) - aUp(K+1) = P3n/P3d at K = k+2
+OK   poly_F4a: wOddLo(K) = P4an/P4ad
+OK   poly_F4b: 4 wOddLo(K)/(K+1) - aUp(K) - aUp(K+1) = P4bn/P4bd at K = k+2
+OK   poly_F4c: wEvenLo(K) = P4cn/P4cd
+OK   poly_F4d: 4 wEvenLo(K)/(K+1) - aUp(K) - aUp(K+1) = P4dn/P4dd at K = k+2
+OK   P1n: all 6 coefficients positive (degree 5)
+OK   P2n: all 5 coefficients positive (degree 4)
+OK   P3n: all 13 coefficients positive (degree 12)
+OK   P4an: all 11 coefficients positive (degree 10)
+OK   P4bn: all 11 coefficients positive (degree 10)
+OK   P4cn: all 12 coefficients positive (degree 11)
+OK   P4dn: all 17 coefficients positive (degree 16)
+OK   w(K) formula (K parity 0)
+OK   w(K) formula (K parity 1)
+OK   odd K: w = 3/2 - 2(K+1)(beta(K+2) + beta(2K+2))
+OK   even K: w = 1/2 - 2(K+1) beta(K+2) + 2(K+1) beta(2K+2)
+OK   renewal: H(l)-H(l+1) = 2K^2/((n-l-1)(n-l)(n-l+1))
+OK   renewal: H(m+1) = 1/(K+1)
+OK   renewal: W(l) = 2H(l) + (n-l-1)(H(l)-H(l+1)) = 2
+OK   renewal: W(m+1) = (n-m) H(m+1) = 1
+OK   renewal: (m+1) - K^2 (1/(n-m-1) - 1/n) = (m+1)^2/n
+OK   renewal: sum_{l=1}^{m+1} H(l) = (m+1)^2/n for all 2<=n<40, m<=n-2
+OK   Q(x+1)-Q(x) = x(2[x>=K]+2[x>=K+1]-2[x>=M]-2[x>=M+1]+2a[x=K+1]-a[x=2K+2]) (K<=8, M<K+12, x<40)
+OK   tau(K+1) = Q(K+1)/((K+1)K) = 2/(K+1)
+OK   Hall identity L_M = c_M((M+1)E^2/Z + F_k) (homogeneous form, d<=7, all k, M)
+
+ALL IDENTITY CHECKS PASSED
