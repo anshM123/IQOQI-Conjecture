@@ -1,0 +1,8 @@
+OK   (I1)-(I5) telescoping identities (263 instances (p,k))
+OK   Lemma D: p (x) p = B (x) B + sum omega (chi_mu,mu + chi_m,M) exactly
+OK   Lemma C: runs of crosses are initial segments of length #{a in [v-u,v]: a >= s}; |C(u,v)| = (v+1)^2-(v-u)^2
+OK   Lemma H: Hall identity, L_M >= 0, sum A_M = 1 - Z^2, L > 0 unless p_0 = ... = p_k
+OK   Proposition W: symmetric, rows = w_k = B/Z, runs majorized (exact, d <= 8, all k, incl. ties)
+OK   Lemma T: nu_k >= 0, sum nu_k min(p_i,p_k) = p_i^t, Gibbs(beta') = sum mu_k w_k (300 random instances, ties incl.)
+
+ALL w_k / LEMMA T CHECKS PASSED

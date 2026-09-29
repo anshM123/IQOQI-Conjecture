@@ -1,0 +1,1696 @@
+\documentclass[11pt]{amsart}
+
+% Standard packages only (all in every TeX Live / MiKTeX installation used by arXiv).
+\usepackage[margin=1.05in]{geometry}
+\usepackage{amssymb}
+\usepackage{alltt}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+% For arXiv: run pdflatex, bibtex, pdflatex, pdflatex and upload main.bbl together with main.tex
+% (a hand-made main.bbl consistent with refs.bib is provided in this folder).
+
+\newtheorem{mainthm}{Theorem}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{proposition}[lemma]{Proposition}
+\newtheorem{corollary}[lemma]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[lemma]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[lemma]{Remark}
+
+\numberwithin{equation}{section}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\Reach}{\operatorname{Reach}}
+\newcommand{\row}{\operatorname{row}}
+\newcommand{\run}{\operatorname{run}}
+\newcommand{\tail}{\operatorname{tail}}
+\newcommand{\ind}[1]{\mathbf{1}[#1]}
+\newcommand{\dom}{\trianglelefteq}
+\newcommand{\sT}{\mathsf{T}}
+\newcommand{\sH}{\mathsf{H}}
+\newcommand{\sG}{\mathsf{G}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\ms}{\mathfrak{m}}
+\newcommand{\aup}{a^{+}}
+\newcommand{\alo}{a^{-}}
+\newcommand{\lean}[1]{\texttt{#1}}
+
+\setlength{\emergencystretch}{3em}
+\begin{document}
+
+\title[Symmetrically thermalizing unitaries]{Symmetrically thermalizing unitaries exist in every dimension}
+
+\author{Ansh Mishra}
+\author{Aryan Senthilkumar}
+
+\subjclass[2020]{81P40; 15A42; 15B51; 68V20}
+\keywords{quantum thermodynamics, correlations, quantum marginal problem, majorization,
+Schur--Horn theorem, formal verification, Lean}
+
+\begin{abstract}
+Two identical quantum systems with Hamiltonian $H$, both in the thermal state $\tau_\beta$, can be
+correlated by a global unitary. The energy needed to create a given amount of mutual information is
+bounded from below, and the bound is attained when there is a \emph{symmetrically thermalizing
+unitary} (STU): a unitary $U$ on $\C^d\otimes\C^d$ such that both marginals of
+$U(\tau_\beta\otimes\tau_\beta)U^\dagger$ are thermal at one common higher temperature,
+$\tau_{\beta'}$ with $\beta'\le\beta$. Bakhshinezhad, Clivaz, Vitagliano, Erker, Rezakhani, Huber and
+Friis (2019) proved that STUs exist in local dimensions $d\le 4$ and conjectured that they exist in
+every dimension. We prove this conjecture: for every $d$, every Hamiltonian $H$, every $\beta>0$ and
+every $\beta'\in[0,\beta]$ a symmetrically thermalizing unitary exists. In an eigenbasis of $H$ it can
+be chosen real orthogonal, and it is given by an explicit construction. The proof is elementary and
+does not use Kirwan's convexity theorem. It reduces the problem to majorization conditions on the
+diagonals of a $d\times d$ array, writes the target as a convex combination of clipped thermal
+vectors, and builds, for every interval of hook lengths and every box size, an explicit symmetric
+``interval uniformisation'' matrix from renewal squares and at most one correcting dipole; the
+dipole amplitude is fixed by identities for alternating harmonic sums. The complete proof, for
+every Hermitian $H$ (via the case $H=\diag(E)$ with sorted energies and a local unitary), has been
+formalised in Lean~4 with Mathlib and uses only Lean's standard axioms. We also show that the
+stronger statement ``every spectrum majorized by the initial one is symmetrically reachable'' is
+false in every dimension $d\ge 4$.
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+%==================================================================================================
+\section{Introduction}\label{sec:intro}
+%==================================================================================================
+
+\subsection{Correlations at minimal energy cost}
+Correlations between physical systems are a resource, and creating them costs energy
+\cite{HuberEtAl2015,BruschiEtAl2015,VitaglianoEtAl2019}. A basic instance of this trade-off is the
+following \cite{BakhshinezhadEtAl2019}. Two identical quantum systems $A$ and $B$, each with
+Hamiltonian $H$ on $\C^d$, are initially uncorrelated and in equilibrium with a bath at inverse
+temperature $\beta>0$, so that the global state is $\tau_\beta\otimes\tau_\beta$ with
+\[
+  \tau_\beta=\tau_\beta(H):=\frac{e^{-\beta H}}{\Tr e^{-\beta H}} .
+\]
+This initial state is completely passive \cite{PuszWoronowicz1978}: no energy can be extracted from it
+by unitaries, even from many copies.
+With full control of the closed composite system one may apply any global unitary $U$, producing
+$\rho'=U(\tau_\beta\otimes\tau_\beta)U^\dagger$. The invested energy
+$\Delta E=\Tr[(H\otimes 1+1\otimes H)(\rho'-\tau_\beta\otimes\tau_\beta)]$ depends only on the
+marginals $\rho'_A=\Tr_B\rho'$ and $\rho'_B=\Tr_A\rho'$. Measuring correlations by the mutual
+information $I(A{:}B)=S(\rho_A)+S(\rho_B)-S(\rho_{AB})$, and using that the global von Neumann
+entropy is invariant under unitaries, the created correlations are $\Delta I=\Delta S_A+\Delta S_B$.
+Since thermal states maximise the entropy at fixed energy, and the entropy of thermal states is a
+concave function of their energy, an invested energy $\Delta E=2\Tr[H(\tau_{\beta'}-\tau_\beta)]$ with
+$0\le\beta'\le\beta$ can create at most $\Delta I\le2\bigl[S(\tau_{\beta'})-S(\tau_\beta)\bigr]$, with
+equality if both final marginals equal $\tau_{\beta'}$ \cite[Sec.~II and App.~A.I]{BakhshinezhadEtAl2019}.
+The resulting lower bound on the energy cost of correlations is therefore attained whenever the
+following unitaries exist.
+
+\begin{definition}\label{def:stu}
+Let $H$ be a Hamiltonian on $\C^d$ and $0\le\beta'\le\beta$. A unitary $U$ on $\C^d\otimes\C^d$ is
+\emph{symmetrically thermalizing} (an STU) for $(H,\beta,\beta')$ if
+\[
+  \Tr_B\bigl[U(\tau_\beta\otimes\tau_\beta)U^\dagger\bigr]
+  =\Tr_A\bigl[U(\tau_\beta\otimes\tau_\beta)U^\dagger\bigr]=\tau_{\beta'} .
+\]
+\end{definition}
+
+Bakhshinezhad, Clivaz, Vitagliano, Erker, Rezakhani, Huber and Friis asked whether STUs exist for
+every Hamiltonian, every $\beta$ and every $\beta'\le\beta$ \cite[Question~2]{BakhshinezhadEtAl2019},
+and conjectured that they do \cite[Sec.~IV]{BakhshinezhadEtAl2019}. The symmetry of the problem is
+essential: when the two systems have different Hamiltonians the analogous statement fails
+\cite[Sec.~II.1.1]{BakhshinezhadEtAl2019}.
+
+\subsection{Previous status}
+STUs were known to exist when the spectrum of $H$ is equally spaced \cite{HuberEtAl2015} (in
+particular for qubits, $d=2$), and for every Hamiltonian in local dimensions $d=3$ and $d=4$
+\cite{BakhshinezhadEtAl2019}. For $d\ge5$, Ref.~\cite{BakhshinezhadEtAl2019} gave sufficient
+conditions and a framework of locally classical subspaces; the general case was still open in the
+PhD thesis \cite{Clivaz2020}. See also \cite{JevticJenningsRudolph2012,McKayEtAl2018} for related
+questions about correlations in unitary orbits.
+
+\subsection{Main result}
+We prove the conjecture.
+
+\medskip
+\noindent\textbf{Theorem} (informal version of Theorems~\ref{thm:main} and~\ref{thm:diag}).
+\emph{For every local dimension $d$, every Hamiltonian $H$ on $\C^d$, every $\beta>0$ and every
+$\beta'\in[0,\beta]$ there is a symmetrically thermalizing unitary. In an eigenbasis of $H$ it can be
+chosen to be a real orthogonal matrix, and it is given by an explicit construction.}
+\medskip
+
+Three features of the proof deserve mention.
+\begin{itemize}
+\item \emph{Elementary and explicit.} The only tools are majorization, the existence direction of
+the real Schur--Horn theorem (in its constructive form \cite{ChanLi1983}), and elementary estimates
+for alternating series. Every object in the construction is explicit.
+\item \emph{Kirwan-free.} For a fixed global spectrum, the set of pairs of marginal spectra in the
+unitary orbit is a convex polytope by Kirwan's convexity theorem \cite{Kirwan1984}; see
+\cite{Klyachko2004,DaftuarHayden2005,ChristandlMitchison2006} for this quantum marginal problem.
+Convexity reduces the conjecture to the reachability of finitely many explicit points, which gives an
+alternative route that we recall in Section~\ref{sec:kirwan}. Our proof does not use it: we work
+inside one fixed combinatorial structure in which convexity is automatic.
+\item \emph{Machine-checked.} The complete proof of Theorem~\ref{thm:main} has been formalised in
+Lean~4 \cite{deMouraUllrich2021} with Mathlib \cite{mathlib2020}: Theorem~\ref{thm:diag}, the statement
+for $H=\diag(E)$ with sorted energies, and the reduction of an arbitrary Hermitian $H$ to it, with
+$\tau_\beta(H)=e^{-\beta H}/\Tr e^{-\beta H}$ defined by the matrix exponential. This includes all
+analytic estimates. The formalisation uses only Lean's three standard axioms and contains no
+unproved statements (Section~\ref{sec:lean}).
+\end{itemize}
+
+\subsection{Strategy}
+Let $p_0\ge p_1\ge\dots\ge p_{d-1}>0$ be the eigenvalues of $\tau_\beta$ and $q$ those of
+$\tau_{\beta'}$, in the same eigenbasis of $H$.
+\begin{enumerate}
+\item \emph{Classical reduction} (Section~\ref{sec:reduction}). Arrange the product eigenvectors
+$|i\rangle|j\rangle$ of $\tau_\beta\otimes\tau_\beta$ in a $d\times d$ array. Each of its $2d-1$
+diagonals meets every row and every column at most once, so a Schur--Horn rotation inside a diagonal
+keeps both marginals diagonal. Hence it suffices to find a real symmetric $d\times d$ matrix $F$
+whose diagonals are majorized by the corresponding diagonals of $p\otimes p$ and whose row sums are
+$q$. The set $\Reach(p)$ of such row-sum vectors is convex.
+\item \emph{Clipped points} (Lemma~\ref{lem:T}). The vector $q$ is a convex combination of the
+clipped thermal vectors $w_k=\min(p,p_k)/Z_k$, $0\le k\le d-1$. This holds for every concave
+nondecreasing reweighting of $p$, in particular for $q\propto p^{\beta'/\beta}$.
+\item \emph{Young diagrams} (Sections~\ref{sec:reduction} and~\ref{sec:unif}). With
+$B=\min(p,p_k)$, the difference $p\otimes p-B\otimes B$ is a nonnegative combination of symmetric Young
+diagrams (squares and crosses). All pieces are nonincreasing along every diagonal, so majorizations
+can be superposed. Each piece is replaced by an \emph{interval uniformisation}: a symmetric matrix
+with entries in $[0,1]$, the same diagonal sums as the piece, and constant row sums. The pieces are
+distributed over square boxes according to an explicit capacity (Hall-type) identity. This gives
+$w_k\in\Reach(p)$.
+\item \emph{Interval uniformisations} (Sections~\ref{sec:unif}--\ref{sec:cases}). We construct them
+for every box size $n$ and every interval $[\ell,h]$ of hook lengths: renewal squares, their
+complements, and a Toeplitz-plus-Hankel matrix (the \emph{T/H/G matrix}) corrected by at most one
+\emph{dipole}. Diagonal sums and row sums hold by exact identities. Nonnegativity and the bound $1$
+reduce to one-dimensional inequalities, which follow from six facts F1--F6 about the numbers
+\[
+  a(K)=4K^2(-1)^K\Bigl(\ln 2-\sum_{i=1}^{K}\frac{(-1)^{i-1}}{i}\Bigr)+1-2K ,
+\]
+proved with a two-sided bound on the tails of the alternating harmonic series.
+\end{enumerate}
+Finally, the ``strong form'' of the problem, in which every spectrum majorized by $p$ is
+symmetrically reachable, holds for $d=3$ \cite[Thm.~1]{BakhshinezhadEtAl2019} but fails for every
+$d\ge4$ (Proposition~\ref{prop:counterexample}). So the thermal form of the target must be used, as it
+is in step~(2).
+
+\subsection{Organisation}
+Section~\ref{sec:statement} states the results precisely, including the exact Lean statement, and
+reduces a general Hamiltonian to the diagonal sorted case. Section~\ref{sec:reduction} contains the
+classical reduction, Lemma~T and the decomposition of $p\otimes p$. Section~\ref{sec:unif} defines
+interval uniformisations, proves that they suffice, and treats renewal squares and complements.
+Sections~\ref{sec:thg}--\ref{sec:cases} construct the remaining interval uniformisations.
+Section~\ref{sec:lean} describes the formal verification and Section~\ref{sec:remarks} contains
+further remarks: the counterexample to the strong form, the Kirwan route, and an outlook.
+Appendix~\ref{app:poly} lists the polynomial identities behind F1--F4, and Appendix~\ref{app:checks}
+lists the independent computer checks of the formulas in this paper.
+
+%==================================================================================================
+\section{Statement of the results}\label{sec:statement}
+%==================================================================================================
+
+We write $[d]=\{0,1,\dots,d-1\}$ and use the standard basis $|i\rangle$, $i\in[d]$, of $\C^d$.
+Operators on $\C^d\otimes\C^d$ are matrices indexed by $[d]\times[d]$, and the partial traces are
+\[
+  (\Tr_B X)_{a,a'}=\sum_{b\in[d]}X_{(a,b),(a',b)},\qquad
+  (\Tr_A X)_{b,b'}=\sum_{a\in[d]}X_{(a,b),(a,b')} .
+\]
+For $E\in\R^d$ and $\beta\in\R$ the \emph{Gibbs vector} is
+$\gamma_\beta(E)_i=e^{-\beta E_i}/\sum_{j}e^{-\beta E_j}$, so that
+$\tau_\beta(\diag E)=\diag\gamma_\beta(E)$.
+
+\begin{mainthm}[STUs exist in every dimension]\label{thm:main}
+Let $d\ge1$, let $H$ be a Hermitian operator on $\C^d$, and let $\beta>0$ and $0\le\beta'\le\beta$.
+There is a unitary $U$ on $\C^d\otimes\C^d$ such that
+\[
+  \Tr_B\bigl[U(\tau_\beta(H)\otimes\tau_\beta(H))U^\dagger\bigr]
+  =\Tr_A\bigl[U(\tau_\beta(H)\otimes\tau_\beta(H))U^\dagger\bigr]=\tau_{\beta'}(H) .
+\]
+If $H=V\diag(E)V^\dagger$ with $V$ unitary and $E_0\le\dots\le E_{d-1}$, one can take
+$U=(V\otimes V)\,O\,(V\otimes V)^\dagger$ with $O$ a real orthogonal matrix.
+\end{mainthm}
+
+\begin{mainthm}[diagonal form]\label{thm:diag}
+Let $d\in\N$, let $E\in\R^d$ with $E_0\le E_1\le\dots\le E_{d-1}$, let $\beta>0$ and
+$0\le\beta'\le\beta$, and put $D_\beta=\diag\gamma_\beta(E)$. There is a unitary $U$ on
+$\C^d\otimes\C^d$, which can be taken to be a real orthogonal matrix, such that
+\[
+  \Tr_B\bigl[U(D_\beta\otimes D_\beta)U^\dagger\bigr]=\Tr_A\bigl[U(D_\beta\otimes D_\beta)U^\dagger\bigr]
+  =D_{\beta'} .
+\]
+\end{mainthm}
+
+The cases $\beta'=\beta$ ($U=1$) and $d\le1$ are trivial, and for $\beta=0$ necessarily $\beta'=0$ and
+$U=1$ works. Degenerate energies are allowed.
+
+\begin{remark}[the formal statement]\label{rem:leanstatement}
+Except for the clause ``which can be taken to be a real orthogonal matrix'', Theorem~\ref{thm:diag}
+is literally the Lean theorem \lean{STUProof.stu\_exists\_unconditional} in the file
+\lean{lean/STUProof/KirwanFreeFinal.lean} of the repository \cite{STUrepo}:
+\begin{alltt}\small
+theorem stu_exists_unconditional :
+    \(\forall\) (d : \(\mathbb{N}\)) (E : Fin d \(\to\) \(\mathbb{R}\)), Monotone E \(\to\)
+    \(\forall\) \(\beta\) \(\beta\sp{\prime}\) : \(\mathbb{R}\), 0 < \(\beta\) \(\to\) 0 \(\le\) \(\beta\sp{\prime}\) \(\to\) \(\beta\sp{\prime}\) \(\le\) \(\beta\) \(\to\)
+      \(\exists\) U \(\in\) unitaryGroup (Fin d \(\times\) Fin d) \(\mathbb{C}\),
+        partialTraceB (U * (gibbsState E \(\beta\) \(\otimes\sb{k}\) gibbsState E \(\beta\)) * star U)
+            = gibbsState E \(\beta\sp{\prime}\) \(\wedge\)
+        partialTraceA (U * (gibbsState E \(\beta\) \(\otimes\sb{k}\) gibbsState E \(\beta\)) * star U)
+            = gibbsState E \(\beta\sp{\prime}\)
+\end{alltt}
+Here \lean{Monotone E} means $E_0\le\dots\le E_{d-1}$, \lean{star U} is $U^\dagger$,
+$\otimes_k$ is the Kronecker product, and the four project definitions entering the statement are
+\begin{alltt}\small
+def gibbs (E : Fin d \(\to\) \(\mathbb{R}\)) (\(\beta\) : \(\mathbb{R}\)) : Fin d \(\to\) \(\mathbb{R}\) :=
+  fun i => Real.exp (-\(\beta\) * E i) / \(\sum\) j, Real.exp (-\(\beta\) * E j)
+def gibbsState (E : Fin d \(\to\) \(\mathbb{R}\)) (\(\beta\) : \(\mathbb{R}\)) : Matrix (Fin d) (Fin d) \(\mathbb{C}\) :=
+  diagonal fun i => (gibbs E \(\beta\) i : \(\mathbb{C}\))
+def partialTraceB (\(\rho\) : Matrix (m \(\times\) n) (m \(\times\) n) R) : Matrix m m R :=
+  Matrix.of fun a a\(\sp{\prime}\) => \(\sum\) b, \(\rho\) (a, b) (a\(\sp{\prime}\), b)
+def partialTraceA (\(\rho\) : Matrix (m \(\times\) n) (m \(\times\) n) R) : Matrix n n R :=
+  Matrix.of fun b b\(\sp{\prime}\) => \(\sum\) a, \(\rho\) (a, b) (a, b\(\sp{\prime}\))
+\end{alltt}
+The proof constructs $U$ as a real orthogonal matrix, embedded in the complex matrices.
+\end{remark}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main} from Theorem~\ref{thm:diag}]
+By the spectral theorem, $H=V\diag(E)V^\dagger$ with $V$ unitary and $E_0\le\dots\le E_{d-1}$ (list the
+eigenvalues in nondecreasing order). Then $e^{-\beta H}=V\diag(e^{-\beta E_i})V^\dagger$, hence
+$\tau_\beta(H)=VD_\beta V^\dagger$ for every $\beta$. For unitaries $V,W$ on $\C^d$ and every operator
+$X$ on $\C^d\otimes\C^d$,
+\begin{equation}\label{eq:localunitary}
+  \Tr_B\bigl[(V\otimes W)X(V\otimes W)^\dagger\bigr]=V(\Tr_B X)V^\dagger,\qquad
+  \Tr_A\bigl[(V\otimes W)X(V\otimes W)^\dagger\bigr]=W(\Tr_A X)W^\dagger .
+\end{equation}
+Indeed, the $(a,a')$ entry of the first left-hand side is
+$\sum_{b,x,y,x',y'}V_{ax}W_{by}X_{(x,y),(x',y')}\overline{V_{a'x'}}\,\overline{W_{by'}}$, and
+$\sum_b W_{by}\overline{W_{by'}}=\delta_{yy'}$ because $W^\dagger W=1$; the second identity is the same
+computation with the roles of the factors exchanged. Let $O$ be the real orthogonal matrix given by
+Theorem~\ref{thm:diag} and put $U=(V\otimes V)O(V\otimes V)^\dagger$. Then
+$U(\tau_\beta(H)\otimes\tau_\beta(H))U^\dagger=(V\otimes V)\,O(D_\beta\otimes D_\beta)O^{\mathsf T}(V\otimes V)^\dagger$,
+and by \eqref{eq:localunitary} both marginals equal $VD_{\beta'}V^\dagger=\tau_{\beta'}(H)$.
+\end{proof}
+
+The identities \eqref{eq:localunitary} are formalised (\lean{partialTraceB\_conj\_kronecker} and
+\lean{partialTraceA\_conj\_kronecker} in \lean{STU.lean}). The reduction itself is also formalised: the
+theorem \lean{stu\_exists\_hermitian} (\lean{GeneralH.lean}) states Theorem~\ref{thm:main} for every
+Hermitian $H$ on $\C^d$, with $\tau_\beta(H)=e^{-\beta H}/\Tr e^{-\beta H}$ defined through Mathlib's matrix
+exponential, and derives it from Theorem~\ref{thm:diag} via the spectral theorem with sorted eigenvalues,
+the covariance of $\tau_\beta$ under unitary conjugation, and the local unitary $V\otimes V$. Hence
+Theorem~\ref{thm:main} itself is machine-checked.
+
+The rest of the paper proves Theorem~\ref{thm:diag}. The skeleton of the proof is:
+\begin{itemize}
+\item Proposition~\ref{prop:reduction}: Theorem~\ref{thm:diag} holds in dimension $d$ if interval
+uniformisations exist for all intervals of all boxes of size $n\le d$ (Lean:
+\lean{stu\_exists\_of\_intervalUnif});
+\item Theorem~\ref{thm:unif}: interval uniformisations exist for every $n$ (Lean:
+\lean{intervalUnifAll\_all}).
+\end{itemize}
+
+%==================================================================================================
+\section{Reduction to a classical problem}\label{sec:reduction}
+%==================================================================================================
+
+\subsection{Majorization}
+For $x\in\R^\ell$ let $x^\downarrow$ be its nonincreasing rearrangement. Recall that $x$ is
+\emph{majorized} by $\lambda$, written $x\prec\lambda$, if $\sum_i x_i=\sum_i\lambda_i$ and
+$\sum_{i<k}x^\downarrow_i\le\sum_{i<k}\lambda^\downarrow_i$ for $1\le k\le\ell$ \cite{MarshallOlkinArnold2011}.
+We use the following variant, which does not sort $\lambda$.
+
+\begin{definition}\label{def:dom}
+For $x,\lambda\in\R^\ell$ we write $x\dom\lambda$ if $\sum_{i<\ell}x_i=\sum_{i<\ell}\lambda_i$ and
+\[
+  \sum_{i\in S}x_i\le\sum_{i<|S|}\lambda_i\qquad\text{for every }S\subseteq[\ell] .
+\]
+\end{definition}
+
+\begin{lemma}\label{lem:dom}
+Let $x,x',\lambda,\lambda'\in\R^\ell$.
+\begin{enumerate}
+\item[(a)] If $x\dom\lambda$ then $x\prec\lambda$. If $\lambda$ is nonincreasing, then
+$x\dom\lambda$ if and only if $x\prec\lambda$.
+\item[(b)] \textup{(Superposition.)} If $x\dom\lambda$ and $x'\dom\lambda'$, then
+$x+x'\dom\lambda+\lambda'$; if $c\ge0$ then $cx\dom c\lambda$.
+\item[(c)] If $\lambda$ is nonincreasing, then $\lambda\dom\lambda$.
+\item[(d)] \textup{(0/1 lemma.)} If $0\le x_i\le1$ for all $i$ and $\sum_i x_i=N\in\{0,\dots,\ell\}$,
+then $x\dom\mathbf 1_N$, where $\mathbf 1_N=(1,\dots,1,0,\dots,0)$ has $N$ ones.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) If $S$ indexes $k$ largest entries of $x$, then
+$\sum_{i<k}x^\downarrow_i=\sum_{i\in S}x_i\le\sum_{i<k}\lambda_i\le\sum_{i<k}\lambda^\downarrow_i$.
+If $\lambda$ is nonincreasing and $x\prec\lambda$, then for $|S|=k$,
+$\sum_{i\in S}x_i\le\sum_{i<k}x^\downarrow_i\le\sum_{i<k}\lambda^\downarrow_i=\sum_{i<k}\lambda_i$.
+(b) Add, respectively scale, the defining inequalities. (c) is the case $x=\lambda$ of (a).
+(d) For every $S$, $\sum_{i\in S}x_i\le\min(|S|,N)=\sum_{i<|S|}(\mathbf 1_N)_i$.
+\end{proof}
+
+In the form ``if $x^{(m)}\prec\lambda^{(m)}$ and all $\lambda^{(m)}$ are nonincreasing, then
+$\sum_m x^{(m)}\prec\sum_m\lambda^{(m)}$'', part (b) is the superposition principle used throughout.
+The common ordering matters: $(0,1)\prec(1,0)$ and $(0,1)\prec(0,1)$, but $(0,2)\not\prec(1,1)$.
+
+\subsection{Configurations and their realisation}
+Throughout Sections~\ref{sec:reduction} and~\ref{sec:unif}, $p=(p_0,\dots,p_{d-1})$ satisfies
+\[
+  p_0\ge p_1\ge\dots\ge p_{d-1}>0,\qquad \sum_{i}p_i=1 .
+\]
+
+\begin{definition}\label{def:config}
+A \emph{configuration} is a real symmetric $d\times d$ matrix $F=(F(i,j))_{i,j\in[d]}$. For
+$0\le s\le d-1$ its \emph{$s$-th run} is $F^{(s)}=(F(i,i+s))_{0\le i\le d-1-s}\in\R^{d-s}$. The runs
+of $p\otimes p$ are $\lambda^{(s)}=(p_ip_{i+s})_{0\le i\le d-1-s}$; they are nonincreasing. $F$ is
+\emph{admissible} for $p$ if $F^{(s)}\dom\lambda^{(s)}$ for every $s$. We put
+\[
+  \Reach(p)=\Bigl\{\bigl(\textstyle\sum_{j}F(i,j)\bigr)_{i\in[d]} : F\text{ admissible for }p\Bigr\}\subseteq\R^d .
+\]
+\end{definition}
+
+The key classical input is the existence direction of the Schur--Horn theorem, due to Horn
+\cite{Schur1923,Horn1954}; a constructive proof by Givens rotations is in \cite{ChanLi1983}.
+
+\begin{lemma}[Horn]\label{lem:horn}
+If $x,\lambda\in\R^N$ and $x\prec\lambda$, there is a real orthogonal $N\times N$ matrix $G$ such
+that the diagonal of $G\diag(\lambda)G^{\mathsf T}$ is $x$.
+\end{lemma}
+
+This lemma is formalised in the project (\lean{schurHorn} in \lean{SchurHorn.lean}), with a
+Chan--Li type induction and the ``hockey-stick'' form of majorization,
+$\sum_i\max(x_i-t,0)\le\sum_i\max(\lambda_i-t,0)$ for all $t\in\R$, which needs no sorting.
+
+\begin{proposition}[realisation]\label{prop:realisation}
+Let $F$ be admissible for $p$ and $q_i=\sum_jF(i,j)$. There is a real orthogonal matrix $O$ on
+$\R^{[d]\times[d]}$ such that
+\[
+  \Tr_B\bigl[O\diag(p\otimes p)O^{\mathsf T}\bigr]=\Tr_A\bigl[O\diag(p\otimes p)O^{\mathsf T}\bigr]=\diag(q) ,
+\]
+where $\diag(p\otimes p)$ has entries $p_ip_j$ at $(i,j)$. The matrix $O$ is block diagonal with respect
+to the partition of $[d]\times[d]$ into the $2d-1$ diagonals $D_t=\{(i,j):j-i=t\}$, $|t|\le d-1$ (the
+loop $t=0$, the upper runs $t>0$ and the lower runs $t<0$; this is the ``tri-run structure'' of the
+Lean development).
+\end{proposition}
+
+\begin{proof}
+Each diagonal $D_t$ meets every row and every column of the array at most once. For $t=s\ge0$ the
+vector $(F(i,j))_{(i,j)\in D_s}$ is the run $F^{(s)}$, and $(p_ip_j)_{(i,j)\in D_s}=\lambda^{(s)}$; for
+$t=-s<0$ the two vectors are the same, by the symmetry of $F$ and of $p\otimes p$. By admissibility
+and Lemma~\ref{lem:dom}(a), $F|_{D_t}\prec(p\otimes p)|_{D_t}$, so Lemma~\ref{lem:horn} gives a real
+orthogonal $G_t$ on $\R^{D_t}$ with $\diag(G_t\diag((p\otimes p)|_{D_t})G_t^{\mathsf T})=F|_{D_t}$. Let
+$O=\bigoplus_tG_t$ and $\rho=O\diag(p\otimes p)O^{\mathsf T}=\bigoplus_tG_t\diag((p\otimes p)|_{D_t})G_t^{\mathsf T}$.
+Then $\rho_{(i,j),(i,j)}=F(i,j)$, and $\rho_{(i,j),(i',j')}=0$ unless $(i,j)$ and $(i',j')$ lie in the same
+diagonal. In $(\Tr_B\rho)_{a,a'}=\sum_b\rho_{(a,b),(a',b)}$ with $a\ne a'$, the cells $(a,b)$ and $(a',b)$
+lie in the same column, hence in different diagonals, so every term vanishes. Therefore
+$\Tr_B\rho=\diag(\sum_bF(a,b))_a=\diag(q)$. In the same way
+$\Tr_A\rho=\diag(\sum_aF(a,b))_b$, which is $\diag(q)$ because $F$ is symmetric.
+\end{proof}
+
+\begin{lemma}[convexity]\label{lem:convex}
+$\Reach(p)$ is convex.
+\end{lemma}
+
+\begin{proof}
+Let $F_k$ be admissible with row sums $q^{(k)}$, and let $\mu_k\ge0$ with $\sum_k\mu_k=1$. Then
+$F=\sum_k\mu_kF_k$ is symmetric with row sums $\sum_k\mu_kq^{(k)}$, and by Lemma~\ref{lem:dom}(b),
+$F^{(s)}=\sum_k\mu_kF_k^{(s)}\dom\sum_k\mu_k\lambda^{(s)}=\lambda^{(s)}$.
+\end{proof}
+
+In Lean, admissible configurations and $\Reach$ are \lean{ReachTri}, Lemma~\ref{lem:dom} is
+\lean{SMaj} with \lean{SMaj.add}, \lean{SMaj.smul}, \lean{SMaj.majOn}, \lean{smaj\_self},
+\lean{smaj\_zeroOne}, Proposition~\ref{prop:realisation} is \lean{ReachTri.orthogonal} (via
+\lean{tri\_reachable} and \lean{lc\_reachable}), and Lemma~\ref{lem:convex} is \lean{ReachTri.convex};
+all are in \lean{KirwanFreeCore.lean}.
+
+\subsection{Lemma T: thermal targets are mixtures of clipped points}
+
+\begin{lemma}[Lemma T]\label{lem:T}
+Let $P_0\ge P_1\ge\dots\ge P_{d-1}>0$ and let $g:[0,\infty)\to\R$ be concave and nondecreasing with
+$g(0)\ge0$. There are $\nu_0,\dots,\nu_{d-1}\ge0$ such that
+\[
+  g(P_i)=\sum_{k=0}^{d-1}\nu_k\min(P_i,P_k)\qquad\text{for all }i\in[d] .
+\]
+\end{lemma}
+
+\begin{proof}
+Let $N_0=0$. For $1\le k\le d-1$ let $N_k=\frac{g(P_{k-1})-g(P_k)}{P_{k-1}-P_k}$ if $P_{k-1}>P_k$, and
+$N_k=N_{k-1}$ if $P_{k-1}=P_k$. Let $N_d=g(P_{d-1})/P_{d-1}$ and $\nu_k=N_{k+1}-N_k$. Write
+$\operatorname{sl}(x,y)=\frac{g(y)-g(x)}{y-x}$ for $0\le x<y$; concavity gives
+$\operatorname{sl}(y,z)\le\operatorname{sl}(x,y)$ for $0\le x<y<z$.
+
+\emph{Claim 1: for $k\in[d]$ and $0\le x<P_k$, $N_k\le\operatorname{sl}(x,P_k)$.} For $k=0$ this holds
+because $g$ is nondecreasing. Assume the claim for $k$, and let $k+1\le d-1$ and $0\le x<P_{k+1}$. If
+$P_{k+1}=P_k$ then
+$N_{k+1}=N_k\le\operatorname{sl}(x,P_k)=\operatorname{sl}(x,P_{k+1})$. Otherwise
+$N_{k+1}=\operatorname{sl}(P_{k+1},P_k)\le\operatorname{sl}(x,P_{k+1})$ by concavity.
+
+\emph{Claim 2: $\nu_k\ge0$.} For $k\le d-2$: if $P_{k+1}=P_k$ then $\nu_k=0$; otherwise Claim~1 with
+$x=P_{k+1}$ gives $N_k\le\operatorname{sl}(P_{k+1},P_k)=N_{k+1}$. For $k=d-1$, Claim~1 with $x=0$ gives
+$N_{d-1}\le(g(P_{d-1})-g(0))/P_{d-1}\le N_d$, since $g(0)\ge0$.
+
+\emph{Claim 3: the identity.} In all cases $N_{k+1}(P_k-P_{k+1})=g(P_k)-g(P_{k+1})$ for $k\le d-2$, and
+$N_dP_{d-1}=g(P_{d-1})$. Since $\min(P_i,P_k)=P_i$ for $k<i$ and $=P_k$ for $k\ge i$, and
+$\sum_{k<i}\nu_k=N_i$,
+\begin{align*}
+  \sum_k\nu_k\min(P_i,P_k)&=N_iP_i+\sum_{k=i}^{d-1}(N_{k+1}-N_k)P_k\\
+  &=\sum_{k=i}^{d-2}N_{k+1}(P_k-P_{k+1})+N_dP_{d-1}=g(P_i) .\qedhere
+\end{align*}
+\end{proof}
+
+\begin{corollary}[thermal targets]\label{cor:thermal}
+Let $E_0\le\dots\le E_{d-1}$, $\beta>0$, $0\le\beta'\le\beta$, $p=\gamma_\beta(E)$ and $q=\gamma_{\beta'}(E)$.
+For $k\in[d]$ put
+\[
+  Z_k=\sum_{i}\min(p_i,p_k)>0,\qquad w_k=\min(p,p_k)/Z_k ,
+\]
+the \emph{clipped points} of $p$. Then $q=\sum_k\mu_kw_k$ with $\mu_k\ge0$ and $\sum_k\mu_k=1$.
+\end{corollary}
+
+\begin{proof}
+$p$ is positive and nonincreasing. With $t=\beta'/\beta\in[0,1]$ we have
+$p_i^t=e^{-\beta'E_i}/(\sum_je^{-\beta E_j})^t$, hence $q_i=p_i^t/S$ with $S=\sum_jp_j^t$. The function
+$g(x)=x^t$ (with $g\equiv1$ if $t=0$) is concave and nondecreasing on $[0,\infty)$ with $g(0)\ge0$.
+Lemma~\ref{lem:T} gives $\nu_k\ge0$ with $p_i^t=\sum_k\nu_k\min(p_i,p_k)$. Put $\mu_k=\nu_kZ_k/S\ge0$.
+Then $\sum_k\mu_kw_k=q$, and $\sum_k\mu_k=\sum_k\nu_k\sum_i\min(p_i,p_k)/S=\sum_ip_i^t/S=1$.
+\end{proof}
+
+In Lean these are \lean{lemmaT} and \lean{thermal\_clip\_weights} (\lean{KirwanFreeCore.lean}).
+By Lemma~\ref{lem:convex} and Proposition~\ref{prop:realisation}, Theorem~\ref{thm:diag} follows once
+every clipped point $w_k$ lies in $\Reach(p)$. This is the content of Proposition~\ref{prop:wk} below.
+
+\subsection{The decomposition of \texorpdfstring{$p\otimes p$}{p x p}}
+Fix $k\in[d]$. Put $p_d=0$ and
+\[
+  c_m=p_m-p_{m+1}\ \ (m\in[d]),\qquad B_i=\min(p_i,p_k),\qquad Z=\sum_iB_i=Z_k .
+\]
+Then $c_m\ge0$ and $c_{d-1}=p_{d-1}>0$.
+
+\begin{lemma}\label{lem:telescope}
+For all $i\in[d]$:
+\begin{align*}
+&\text{(I1)}\quad p_i=\sum_{M=0}^{d-1}\ind{i\le M}c_M, &&\text{(I2)}\quad B_i=\sum_{M=k}^{d-1}\ind{i\le M}c_M,\\
+&\text{(I3)}\quad p_i-B_i=\sum_{m=0}^{k-1}\ind{i\le m}c_m, &&\text{(I4)}\quad Z=\sum_{M=k}^{d-1}(M+1)c_M,\\
+&\text{(I5)}\quad 1-Z=\sum_{m=0}^{k-1}(m+1)c_m .
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+(I1) telescopes. For (I2), the right-hand side is $p_{\max(i,k)}=\min(p_i,p_k)$ because $p$ is
+nonincreasing. (I3) is (I1)$-$(I2). Summing (I2) and (I3) over $i$ gives (I4) and (I5), using
+$\sum_ip_i=1$.
+\end{proof}
+
+For $u,v\in\N$ let $C(u,v)=([0,u]\times[0,v])\cup([0,v]\times[0,u])\subseteq\N^2$ be the \emph{cross}
+with arms $u,v$, and $\chi_{u,v}$ its indicator function. It is symmetric in $(u,v)$ and in its two
+arguments, and $Q_u=\chi_{u,u}$ is the indicator of the square $[0,u]^2$. Crosses and squares are
+symmetric Young diagrams (down-closed subsets of $\N^2$). (In the working notes accompanying the Lean
+code the squares are called $Q$ and the crosses $U$; in Lean, $\chi_{u,v}$ is \lean{crossInd u v}.)
+
+\begin{lemma}[decomposition]\label{lem:decomp}
+Let $\omega_{m,M}=\tfrac12c_mc_M(1+\ind{M\ge k})$ for $m<k$ and $M\in[d]$. For all $i,j\in[d]$,
+\[
+  p_ip_j=B_iB_j+\sum_{m=0}^{k-1}\sum_{M=0}^{d-1}\omega_{m,M}\bigl(Q_{\min(m,M)}(i,j)+\chi_{m,M}(i,j)\bigr) .
+\]
+\end{lemma}
+
+\begin{proof}
+By inclusion--exclusion,
+$Q_{\min(m,M)}(i,j)+\chi_{m,M}(i,j)=\ind{i\le m}\ind{j\le M}+\ind{i\le M}\ind{j\le m}$. By (I1) and (I2),
+$\sum_M\tfrac12c_M(1+\ind{M\ge k})\ind{j\le M}=\tfrac12(p_j+B_j)$. With (I3) the double sum becomes
+$\tfrac12(p_i-B_i)(p_j+B_j)+\tfrac12(p_j-B_j)(p_i+B_i)=p_ip_j-B_iB_j$.
+\end{proof}
+
+\begin{lemma}[runs of a cross]\label{lem:crossrun}
+Let $u\le v$ and $s\ge0$. For $i\in\N$, $\chi_{u,v}(i,i+s)=1$ if and only if $s\le v$ and
+$i\le\min(u,v-s)$. Consequently, for $v<d$ the run $(\chi_{u,v}(i,i+s))_{i<d-s}$ equals
+$\mathbf 1_{N_s}$ with $N_s=\#\{a\in[v-u,v]:a\ge s\}$, and $C(u,v)\cap[d]^2$ has
+$\ms(v-u,v)$ cells, where
+\[
+  \ms(\ell,h)=\sum_{a=\ell}^{h}(2a+1)=(h+1)^2-\ell^2 .
+\]
+\end{lemma}
+
+\begin{proof}
+The condition $(i\le v\wedge i+s\le u)$ implies $(i\le u\wedge i+s\le v)$ because $u\le v$, so
+$\chi_{u,v}(i,i+s)=1$ iff $i\le u$ and $i+s\le v$. For $s\le v$ this gives
+$\min(u,v-s)+1=\#\{a\in[v-u,v]:a\ge s\}$ ones at the start of the run; for $s>v$ both sides are $0$.
+The cell count is $(u+1)(v+1)+(v+1)(u+1)-(u+1)^2=(v+1)^2-(v-u)^2$.
+\end{proof}
+
+Thus $C(u,v)$ is the symmetric Young diagram whose Frobenius hooks have the arm lengths
+$v-u,\dots,v$: its runs only depend on the \emph{arm interval} $[v-u,v]$. The square $Q_u$ has arm
+interval $[0,u]$.
+
+\subsection{The Hall identity}
+For $k\le M\le d-1$ define the \emph{capacity} of the box $[0,M]$, the mass of the \emph{big crosses}
+assigned to it, and the \emph{leftover}:
+\[
+  A_M=\frac{(1-Z^2)(M+1)c_M}{Z},\qquad \Lambda_M=\sum_{m=0}^{k-1}\omega_{m,M}\,\ms(M-m,M),\qquad
+  L_M=A_M-\Lambda_M,
+\]
+and $L=\sum_{M=k}^{d-1}L_M$.
+
+\begin{lemma}[Hall identity]\label{lem:hall}
+For $k\le M\le d-1$,
+\[
+  L_M=c_M\Bigl(\frac{(M+1)(1-Z)^2}{Z}+S_k\Bigr),\qquad S_k=\sum_{i=0}^{k-1}(2i+1)(p_i-p_k)\ge0 .
+\]
+In particular $L_M\ge0$. Moreover $\sum_{M=k}^{d-1}A_M=1-Z^2$, and $L>0$ unless $p_0=p_1=\dots=p_k$.
+\end{lemma}
+
+\begin{proof}
+For $M\ge k$ we have $\omega_{m,M}=c_mc_M$ and $\ms(M-m,M)=(m+1)(2M+1-m)=2(m+1)(M+1)-(m+1)^2$. By (I5)
+and the summation by parts $\sum_{m<k}(m+1)^2c_m=\sum_{m<k}\sum_{i\le m}(2i+1)c_m=S_k$, we get
+$\Lambda_M=c_M(2(M+1)(1-Z)-S_k)$. Hence
+\[
+  L_M=c_M\Bigl((M+1)(1-Z)\bigl(\tfrac{1+Z}{Z}-2\bigr)+S_k\Bigr)=c_M\Bigl(\tfrac{(M+1)(1-Z)^2}{Z}+S_k\Bigr).
+\]
+By (I4), $\sum_{M\ge k}A_M=(1-Z^2)Z/Z$. If $p_m>p_{m+1}$ for some $m<k$, then $1-Z\ge(m+1)c_m>0$ by
+(I5), so $L\ge L_{d-1}\ge d\,c_{d-1}(1-Z)^2/Z>0$.
+\end{proof}
+
+The Lean development proves the inequality $L_M\ge(M+1)c_M(1-Z)^2/Z$, which suffices
+(\lean{leftM\_nonneg}, \lean{Ltot\_pos}, \lean{sum\_aM} in \lean{KirwanFree.lean}, using the bound
+$\ms(M-m,M)\le2(m+1)(M+1)$); Lemma~\ref{lem:decomp} is \lean{wk\_cell\_identity} there.
+
+%==================================================================================================
+\section{Interval uniformisations}\label{sec:unif}
+%==================================================================================================
+
+\subsection{Definition}
+The following definition is, clause by clause, the Lean structure \lean{IsIntervalUnif n lo hi u}
+(\lean{IntervalUnif.lean}), with $\ell=$ \lean{lo} and $h=$ \lean{hi}.
+
+\begin{definition}[interval uniformisation]\label{def:unif}
+Let $n\ge1$ and $0\le\ell\le h\le n-1$. An \emph{interval uniformisation of $[\ell,h]$ in the $n$-box} is
+a function $Y:\N\times\N\to\R$ such that
+\begin{enumerate}
+\item[(U1)] $Y(i,j)=Y(j,i)$ for all $i,j$;
+\item[(U2)] $0\le Y(i,j)\le1$ for all $i,j$;
+\item[(U3)] $Y(i,j)=0$ whenever $i\ge n$;
+\item[(U4)] $\sum_{i=0}^{n-1}Y(i,i+s)=r_s:=\#\{a\in[\ell,h]:a\ge s\}$ for every $s\ge0$;
+\item[(U5)] $\sum_{j=0}^{n-1}Y(r,j)=\frac1n\sum_{a=\ell}^{h}(2a+1)=\frac{\ms(\ell,h)}{n}$ for every $r\in[n]$.
+\end{enumerate}
+We say that $\mathrm{UNIF}(n)$ holds (Lean: \lean{IntervalUnifAll n}) if such a $Y$ exists for every
+$0\le\ell\le h\le n-1$.
+\end{definition}
+
+By (U1) and (U3), $Y$ vanishes outside $[n]^2$. The runs of $Y$ have the totals of the runs of a
+symmetric Young diagram with arm interval $[\ell,h]$, but all row sums are equal.
+
+\begin{lemma}\label{lem:unifdom}
+Let $Y$ be an interval uniformisation of $[v-u,v]$ in the $n$-box, where $u\le v<n\le d$. Then for every
+$s<d$ the run $(Y(i,i+s))_{i<d-s}$ satisfies $(Y(i,i+s))_{i<d-s}\dom(\chi_{u,v}(i,i+s))_{i<d-s}$, and
+for $r\in[d]$, $\sum_{j<d}Y(r,j)=\ind{r<n}\,\ms(v-u,v)/n$.
+\end{lemma}
+
+\begin{proof}
+The entries lie in $[0,1]$ by (U2). Since $Y(i,i+s)=0$ when $i+s\ge n$ (by (U1), (U3)) and $n\le d$,
+both $\sum_{i<d-s}Y(i,i+s)$ and the sum in (U4) reduce to $\sum_{i<n-s}Y(i,i+s)$, so the run sums to
+$r_s$. By Lemma~\ref{lem:crossrun} the cross run is $\mathbf 1_{r_s}$, and Lemma~\ref{lem:dom}(d)
+applies. The row sums follow from (U3) and (U5).
+\end{proof}
+
+In Lean this is \lean{IsIntervalUnif.smaj} and \lean{IsIntervalUnif.row'}.
+
+\subsection{Clipped points are reachable}
+
+\begin{proposition}\label{prop:wk}
+Assume that for every $n\le d$ and every $0\le\ell\le h\le n-1$ an interval uniformisation
+$Y_n[\ell,h]$ of $[\ell,h]$ in the $n$-box is given. Then $w_k=B/Z\in\Reach(p)$ for every $k\in[d]$.
+\end{proposition}
+
+\begin{proof}
+Fix $k$ and use the notation of Section~\ref{sec:reduction}. All matrices below are restricted to
+$[d]\times[d]$.
+
+\emph{Trivial case.} If $p_0=\dots=p_k$, then $B=p$, $Z=1$ and $w_k=p$; the configuration
+$F(i,j)=p_ip_j$ is admissible by Lemma~\ref{lem:dom}(c) and has row sums $p$.
+
+\emph{General case.} Otherwise $L>0$ by Lemma~\ref{lem:hall}. Put $\xi_M=L_M/L$ for $k\le M\le d-1$,
+so $\xi_M\ge0$ and $\sum_M\xi_M=1$. For $0\le\ell\le h\le k-1$ define the \emph{flexible piece}
+\[
+  Y^{\mathrm{fl}}[\ell,h]=\sum_{M=k}^{d-1}\xi_M\,Y_{M+1}[\ell,h] ,
+\]
+a convex combination of uniformisations in the boxes $[0,M]$, $M\ge k>h$. For $m<k$ and $M\in[d]$ let
+\[
+  G_{m,M}=
+  \begin{cases}
+    Y_{M+1}[M-m,M]+Y^{\mathrm{fl}}[0,m], & M\ge k,\\[2pt]
+    Y^{\mathrm{fl}}[\,|m-M|,\max(m,M)]+Y^{\mathrm{fl}}[0,\min(m,M)], & M<k,
+  \end{cases}
+\]
+and
+\[
+  F=B\otimes B+\sum_{m=0}^{k-1}\sum_{M=0}^{d-1}\omega_{m,M}\,G_{m,M} .
+\]
+Thus the square $Q_{\min(m,M)}$ is always replaced by a flexible piece; a cross $\chi_{m,M}$ with
+$M\ge k$ (a \emph{big cross}) is replaced by a uniformisation of its arm interval $[M-m,M]$ in its own
+box $[0,M]$ (then $\min(m,M)=m$); and a cross with $M<k$ is replaced by a flexible piece.
+
+\emph{Symmetry.} Every term is symmetric.
+
+\emph{Runs.} Fix $s<d$. The run of $B\otimes B$ is nonincreasing, so it is $\dom$ itself
+(Lemma~\ref{lem:dom}(c)). By Lemma~\ref{lem:unifdom} (with $n=M+1\le d$), the run of
+$Y_{M+1}[M-m,M]$ is $\dom$ the run of $\chi_{m,M}$, and for $v<k\le M$ the run of
+$Y_{M+1}[v-u,v]$ is $\dom$ the run of $\chi_{u,v}$; averaging with the weights $\xi_M$
+(Lemma~\ref{lem:dom}(b)), the run of $Y^{\mathrm{fl}}[v-u,v]$ is $\dom$ the run of $\chi_{u,v}$. Hence
+the run of $G_{m,M}$ is $\dom$ the run of $Q_{\min(m,M)}+\chi_{m,M}$. Adding with the weights
+$\omega_{m,M}\ge0$ and using Lemma~\ref{lem:decomp}, $F^{(s)}\dom\lambda^{(s)}$.
+
+\emph{Rows.} Fix $r\in[d]$ and let $\theta(r)=\sum_{M=k}^{d-1}\xi_M\ind{r\le M}/(M+1)$. By
+Lemma~\ref{lem:unifdom}, row $r$ of $Y_{M+1}[\ell,h]$ sums to $\ms(\ell,h)\ind{r\le M}/(M+1)$ and row
+$r$ of $Y^{\mathrm{fl}}[\ell,h]$ to $\ms(\ell,h)\theta(r)$. Row $r$ of $B\otimes B$ sums to $B_rZ$.
+Collecting terms,
+\[
+  \sum_jF(r,j)=B_rZ+\sum_{M=k}^{d-1}\Lambda_M\frac{\ind{r\le M}}{M+1}+\Lambda^{\mathrm{fl}}\,\theta(r),
+\]
+where $\Lambda^{\mathrm{fl}}$ is the total $\omega$-weighted mass of the flexible pieces. The total mass
+of all pieces is
+$\sum_{m,M}\omega_{m,M}\bigl(\ms(0,\min(m,M))+\ms(|m-M|,\max(m,M))\bigr)=\sum_{i,j<d}(p_ip_j-B_iB_j)=1-Z^2$ by
+Lemmas~\ref{lem:decomp} and~\ref{lem:crossrun}, so
+$\Lambda^{\mathrm{fl}}=1-Z^2-\sum_M\Lambda_M=\sum_M(A_M-\Lambda_M)=L$ by Lemma~\ref{lem:hall}. Since
+$\xi_ML=L_M$,
+\begin{align*}
+  \sum_jF(r,j)&=B_rZ+\sum_{M=k}^{d-1}(\Lambda_M+L_M)\frac{\ind{r\le M}}{M+1}
+  =B_rZ+\frac{1-Z^2}{Z}\sum_{M=k}^{d-1}\ind{r\le M}c_M\\
+  &=B_rZ+\frac{(1-Z^2)B_r}{Z}=\frac{B_r}{Z},
+\end{align*}
+using the definition of $A_M$ and (I2). Hence $F$ is admissible with row sums $w_k$.
+\end{proof}
+
+In Lean this is \lean{wkU\_reach} (with \lean{wkU\_smaj} and \lean{wkU\_rows}) in
+\lean{KirwanFreeU.lean}. The boxes used have size $n=M+1\le d$; the big crosses need the intervals
+$[M-m,M]$ with $h=n-1$, and the flexible pieces need intervals with $h\le n-2$.
+
+\subsection{The reduction and the main theorem}
+
+\begin{proposition}[reduction]\label{prop:reduction}
+If $\mathrm{UNIF}(n)$ holds for every $n\le d$, then Theorem~\ref{thm:diag} holds in dimension $d$.
+\end{proposition}
+
+\begin{proof}
+For $d=0$ there is nothing to prove. For $d\ge1$ let $p=\gamma_\beta(E)$ and $q=\gamma_{\beta'}(E)$. By
+Corollary~\ref{cor:thermal}, $q$ is a convex combination of the $w_k$, which lie in $\Reach(p)$ by
+Proposition~\ref{prop:wk}. By Lemma~\ref{lem:convex}, $q\in\Reach(p)$, and
+Proposition~\ref{prop:realisation} gives a real orthogonal $O$ with both marginals of
+$O\diag(p\otimes p)O^{\mathsf T}$ equal to $\diag(q)$. Since $D_\beta\otimes D_\beta=\diag(p\otimes p)$
+and $D_{\beta'}=\diag(q)$, the matrix $U=O$ satisfies Theorem~\ref{thm:diag}.
+\end{proof}
+
+This is \lean{stu\_exists\_of\_intervalUnif} (\lean{KirwanFreeU.lean}). The remaining ingredient is:
+
+\begin{mainthm}[interval uniformisations exist]\label{thm:unif}
+$\mathrm{UNIF}(n)$ holds for every $n\ge1$.
+\end{mainthm}
+
+\begin{proof}[Proof of Theorem~\ref{thm:diag}]
+Combine Proposition~\ref{prop:reduction} and Theorem~\ref{thm:unif}. (In Lean:
+\lean{stu\_exists\_unconditional}, in \lean{KirwanFreeFinal.lean}.)
+\end{proof}
+
+Theorem~\ref{thm:unif} is proved in Section~\ref{sec:proofunif}. The constructions are summarised in
+Table~\ref{tab:cases}, where $K=n-1-h$ and $M=n-\ell$.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{llll}
+\toprule
+interval & case & construction & reference\\
+\midrule
+$[0,n-1]$ & (A) $h=n-1$ & $J_n$ (all ones) & Lemma~\ref{lem:compl}\\
+$[\ell,n-1]$, $\ell\ge1$ & (A) $h=n-1$ & $J_n-\cR^{\ell-1}_n$ & Lemma~\ref{lem:compl}\\
+$[0,h]$, $h\le n-2$ & (B) $\ell=0$ & renewal square $\cR^h_n$ & Proposition~\ref{prop:renewal}\\
+$[\ell,h]$, $1\le\ell\le h\le n-2$ & (C) $n\le2K+1$ & $Y^{0}$ (no dipole) & Proposition~\ref{prop:caseC}\\
+same & (D) $K=1$, $n\ge4$ & $Y^{2/7}$ & Proposition~\ref{prop:caseD}\\
+same & (E) $K\ge2$, $n\ge2K+2$ & $Y^{\alpha^*}$ & Proposition~\ref{prop:caseE}\\
+\bottomrule
+\end{tabular}
+\caption{The interval uniformisations. $Y^\alpha$ is the T/H/G matrix with one dipole of amplitude
+$\alpha$ (Definition~\ref{def:dipole}); $\alpha^*$ is given in \eqref{eq:alphastar}.}
+\label{tab:cases}
+\end{table}
+
+\subsection{Renewal squares and complements}
+
+\begin{proposition}[renewal squares]\label{prop:renewal}
+Let $n\ge2$, $0\le m\le n-2$ and $K=n-m-1\ge1$. Define $\eta_\ell=1-\frac{K^2}{(n-\ell)(n-\ell+1)}$ for
+$1\le\ell\le m+1$ and $\eta_\ell=0$ for $\ell=0$ and for $\ell\ge m+2$; put
+$A_r=\sum_{t=0}^{m+1}(-1)^t\eta_{r+t}$ for $r\ge0$, and
+\[
+  \cR^m_n(i,j)=A_{|i-j|+1}+A_{\min(i+j+2,\,2n-i-j)}\quad(i,j<n),\qquad \cR^m_n(i,j)=0\ \text{otherwise}.
+\]
+Then $\cR^m_n$ is an interval uniformisation of $[0,m]$ in the $n$-box.
+\end{proposition}
+
+\begin{proof}
+\emph{(i) Tails.} In the sum $A_r+A_{r+1}$ all terms cancel in pairs except the first term of $A_r$
+and the last term of $A_{r+1}$, so $A_r+A_{r+1}=\eta_r+(-1)^{m+1}\eta_{r+m+2}=\eta_r$, because
+$r+m+2\ge m+2$.
+
+\emph{(ii) Weights.} For $1\le\ell\le m$,
+$\eta_\ell-\eta_{\ell+1}=\frac{2K^2}{(n-\ell-1)(n-\ell)(n-\ell+1)}\ge0$, and $\eta_{m+1}=\frac1{K+1}$. Since
+$(n-\ell)(n-\ell+1)\ge K(K+1)>K^2$ for $\ell\le m+1$, we get
+$1\ge\eta_1\ge\eta_2\ge\dots\ge\eta_{m+1}>0=\eta_{m+2}=\eta_{m+3}=\cdots$.
+
+\emph{(iii) Alternating sums.} For $r\ge1$ and $\kappa\ge0$, (i) gives
+$A_r+A_{r+2\kappa+1}=\sum_{t=0}^{2\kappa}(-1)^t\eta_{r+t}$, an alternating sum of a nonincreasing
+nonnegative sequence; hence $0\le A_r+A_{r+2\kappa+1}\le\eta_r\le1$ (by induction on $\kappa$:
+$A_r+A_{r+2\kappa+3}=(\eta_r-\eta_{r+1})+(A_{r+2}+A_{r+2\kappa+3})$).
+
+\emph{(iv) Entries.} For $i,j<n$ one checks $\min(i+j+2,2n-i-j)=|i-j|+2+2\kappa$ with
+$\kappa=\min(i,j,n-1-i,n-1-j)$. So $\cR^m_n(i,j)=A_{s+1}+A_{s+1+2\kappa+1}\in[0,\eta_{s+1}]\subseteq[0,1]$
+with $s=|i-j|$, and $\cR^m_n(i,j)=0$ if $s\ge m+1$, since then both indices are $\ge m+2$ and
+$A_r=0$ for $r\ge m+2$. (U1)--(U3) hold.
+
+\emph{(v) Rows.} Row $0$: $\cR^m_n(0,j)=A_{j+1}+A_{j+2}=\eta_{j+1}$, so it sums to
+$\sum_{\ell=1}^{m+1}\eta_\ell=(m+1)-K^2\bigl(\frac1{n-m-1}-\frac1n\bigr)=\frac{(m+1)^2}{n}=\frac{\ms(0,m)}n$.
+For $0\le r\le n-2$, substituting $j\mapsto j+1$ shows that the Toeplitz part changes by
+$\sum_jA_{|r+1-j|+1}-\sum_jA_{|r-j|+1}=A_{r+2}-A_{n-r}$, and the Hankel part by
+$\sum_jA_{\varphi(r+1+j)}-\sum_jA_{\varphi(r+j)}=A_{\varphi(r+n)}-A_{\varphi(r)}=A_{n-r}-A_{r+2}$,
+where $\varphi(S)=\min(S+2,2n-S)$ (all sums over $0\le j\le n-1$). So all rows have the same sum. This is (U5).
+
+\emph{(vi) Runs.} Let $W_\ell=2\eta_\ell+(n-\ell-1)(\eta_\ell-\eta_{\ell+1})$. By (ii), $W_\ell=2$ for
+$1\le\ell\le m$ and $W_{m+1}=(n-m)\eta_{m+1}=1$. For $0\le s\le n-2$ we claim
+$\run_s=W_{s+1}+\run_{s+2}$, where $\run_s=\sum_i\cR^m_n(i,i+s)$. The first and last cells of run $s$,
+$(0,s)$ and $(n-1-s,n-1)$, have $\kappa=0$ and value $A_{s+1}+A_{s+2}=\eta_{s+1}$. For
+$0\le i\le n-s-3$, the cells $(i+1,i+1+s)$ and $(i,i+s+2)$ have the same $i+j$, hence the same Hankel
+term, and Toeplitz terms $A_{s+1}$ and $A_{s+3}$, which differ by $\eta_{s+1}-\eta_{s+2}$ by (i). The
+cells $(i,i+s+2)$, $0\le i\le n-s-3$, form run $s+2$. Summing,
+$\run_s=2\eta_{s+1}+\run_{s+2}+(n-s-2)(\eta_{s+1}-\eta_{s+2})=W_{s+1}+\run_{s+2}$. Now $\run_s=0$ for
+$s\ge m+1$ by (iv), $\run_m=W_{m+1}=1$, $\run_{m-1}=W_m=2$ if $m\ge1$, and downward induction gives
+$\run_s=m+1-s=\#\{a\in[0,m]:a\ge s\}$ for $s\le m$. This is (U4).
+\end{proof}
+
+The name comes from an equivalent description: $\cR^m_n$ is the superposition of the reversal
+permutation matrices of the blocks $[0,\ell-1]$ and $[n-\ell,n-1]$ with weight $\eta_\ell$ and of the
+interior blocks $[a,a+\ell-1]$ ($1\le a\le n-1-\ell$) with weight $\eta_\ell-\eta_{\ell+1}$, a
+stationary renewal process of block boundaries. We do not need this description (it was checked for
+$n\le24$, Appendix~\ref{app:checks}). In Lean, $\cR^m_n$ is \lean{renU} and the proposition is
+\lean{isIntervalUnif\_renU} (\lean{Renewal.lean}).
+
+\begin{lemma}[$J$ and complements]\label{lem:compl}
+The all-ones matrix $J_n$ of the $n$-box is an interval uniformisation of $[0,n-1]$. If $Y$ is an
+interval uniformisation of $[0,m]$ in the $n$-box, $m\le n-2$, then $J_n-Y$ (restricted to the box) is
+one of $[m+1,n-1]$.
+\end{lemma}
+
+\begin{proof}
+For $J_n$: $\run_s=n-s=\#\{a\in[0,n-1]:a\ge s\}$ and all rows equal $n=n^2/n$. For $J_n-Y$: entries lie in
+$[0,1]$; $\run_s=(n-s)-\#\{a\in[0,m]:a\ge s\}=\#\{a\in[m+1,n-1]:a\ge s\}$; rows equal
+$n-(m+1)^2/n=\ms(m+1,n-1)/n$.
+\end{proof}
+
+In Lean: \lean{isIntervalUnif\_boxJ} and \lean{IsIntervalUnif.compl} (\lean{Renewal.lean}).
+
+%==================================================================================================
+\section{T/H/G matrices}\label{sec:thg}
+%==================================================================================================
+
+To avoid confusion with the Hamiltonian, the three sequences below are written in sans-serif.
+
+\begin{definition}\label{def:thg}
+Let $n\ge1$ and $\sT,\sH,\sG:\N\to\R$. The \emph{T/H/G matrix} $Y=Y[\sT,\sH,\sG]$ of the $n$-box is
+defined for $i,j<n$ by
+\[
+  Y(i,j)=
+  \begin{cases}
+    \tfrac12\bigl(\sT(|i-j|)+\sH(m'(i,j))\bigr), & i+j\ne n-1,\\[2pt]
+    \tfrac12\bigl(\sT(|i-j|)+\sG(|i-j|)\bigr), & i+j=n-1,
+  \end{cases}
+  \qquad m'(i,j)=\min(i+j+1,\,2n-1-i-j),
+\]
+and $Y(i,j)=0$ if $i\ge n$ or $j\ge n$. We write $\run_s=\sum_{i<n}Y(i,i+s)$ and
+$\row_r=\sum_{j<n}Y(r,j)$.
+\end{definition}
+
+The Toeplitz part depends on $|i-j|$, the Hankel part on $i+j$ (through the ``level'' $m'$), and the
+antidiagonal $i+j=n-1$ is treated separately.
+
+\begin{lemma}[levels and cells]\label{lem:levels}
+Let $i,j<n$ and $s=|i-j|$. Then $m'(i,j)-s$ is odd and positive, $m'(i,j)\le n$, and $m'(i,j)=n$ if
+and only if $i+j=n-1$; if $i+j=n-1$ then $n-s$ is odd. Consequently $Y$ is symmetric, and $0\le Y\le1$
+holds provided
+\begin{align}
+  0\le\sT(s)+\sH(u)\le2&\quad\text{for all }0\le s<u\le n-1\text{ with }u-s\text{ odd},\label{eq:cellTH}\\
+  0\le\sT(s)+\sG(s)\le2&\quad\text{for all }0\le s\le n-1\text{ with }n-s\text{ odd}.\label{eq:cellTG}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+$i+j+1-s=2\min(i,j)+1$ and $2n-1-i-j-s=2n-1-2\max(i,j)\ge1$ are odd and positive. If $i+j\le n-2$ then
+$m'\le i+j+1\le n-1$; if $i+j\ge n$ then $m'\le2n-1-i-j\le n-1$; if $i+j=n-1$ then $m'=n$ and
+$n-s=2\min(i,j)+1$.
+\end{proof}
+
+\begin{lemma}[runs]\label{lem:thgruns}
+\textup{(a)} $\run_s=0$ for $s\ge n$. \textup{(b)} $\run_{n-1}=\frac12(\sT(n-1)+\sG(n-1))$.
+\textup{(c)} If $n\ge2$, $\run_{n-2}=\sT(n-2)+\sH(n-1)$. \textup{(d)} For $0\le s\le n-3$,
+\begin{multline*}
+  2\run_s-2\run_{s+2}\\
+  =(n-s)\sT(s)-(n-s-2)\sT(s+2)+2\sH(s+1)+\ind{n-s\text{ odd}}\bigl(\sG(s)-\sG(s+2)\bigr).
+\end{multline*}
+\end{lemma}
+
+\begin{proof}
+(a) is clear. (b) Run $n-1$ is the antidiagonal cell $(0,n-1)$. (c) Run $n-2$ consists of $(0,n-2)$
+and $(1,n-1)$, with $i+j\in\{n-2,n\}$ and $m'=n-1$ in both cases. (d) Let $0\le i\le n-s-3$. The cells
+$(i+1,i+1+s)$ and $(i,i+s+2)$ have the same sum $i+j=2i+s+2$, so both are antidiagonal or neither is, and
+they have the same level $m'$. Their difference is $\frac12(\sT(s)-\sT(s+2))$, plus
+$\frac12(\sG(s)-\sG(s+2))$ when $2i+s+3=n$; such an $i$ exists (and is unique) iff $n-s$ is odd. The
+cells $(i,i+s+2)$, $0\le i\le n-s-3$, form run $s+2$. The two remaining cells of run $s$, $(0,s)$ and
+$(n-1-s,n-1)$, are not antidiagonal and have level $s+1$, so each equals $\frac12(\sT(s)+\sH(s+1))$.
+Summing and multiplying by $2$ gives the claim.
+\end{proof}
+
+\begin{lemma}[row shift]\label{lem:thgrows}
+For $0\le r\le n-2$,
+\begin{multline*}
+  2\row_{r+1}-2\row_r=\bigl(\sT(r+1)-\sH(r+1)\bigr)-\bigl(\sT(n-1-r)-\sH(n-1-r)\bigr)\\
+  +\sG(|2r+3-n|)-\sG(|2r+1-n|) .
+\end{multline*}
+\end{lemma}
+
+\begin{proof}
+Let $\sH^*(S)=\sH(\min(S+1,2n-1-S))$ for $S\ne n-1$ and $\sH^*(n-1)=0$. The antidiagonal cell of row $r$
+is $j=n-1-r$, at distance $|2r+1-n|$, so
+$2\row_r=\sum_{j<n}\sT(|r-j|)+\sum_{j<n}\sH^*(r+j)+\sG(|2r+1-n|)$. Shifting $r$ to $r+1$, the Toeplitz sum
+gains $\sT(r+1)$ (the term $j=0$) and loses $\sT(n-1-r)$ (the old term $j=n-1$); the Hankel sum
+$\sum_{S=r+1}^{r+n}\sH^*(S)$ loses $\sH^*(r)=\sH(r+1)$ and gains $\sH^*(r+n)=\sH(n-1-r)$; the antidiagonal
+term changes from $\sG(|2r+1-n|)$ to $\sG(|2r+3-n|)$.
+\end{proof}
+
+\begin{lemma}[the row value is forced]\label{lem:rowvalue}
+Let $Y:\N\times\N\to\R$ satisfy (U1), (U3) and (U4) for $[\ell,h]$, $h<n$, and suppose all rows
+$r\in[n]$ have the same sum $c$. Then $c=\ms(\ell,h)/n$, i.e.\ (U5) holds.
+\end{lemma}
+
+\begin{proof}
+Splitting $[n]^2$ into the upper runs and the strictly lower runs and using symmetry,
+$nc=\sum_{s\ge0}\run_s+\sum_{s\ge1}\run_s=\sum_{s\ge0}(r_s+r_{s+1})=\sum_{a=\ell}^{h}\bigl((a+1)+a\bigr)$.
+\end{proof}
+
+In Lean these are \lean{thgU}, \lean{thg\_cells}, \lean{thg\_run\_rec}, \lean{thg\_run\_top},
+\lean{thg\_run\_top2}, \lean{thg\_row\_succ} and \lean{row\_const\_value} (\lean{DipoleUnif.lean}).
+
+%==================================================================================================
+\section{The one-dipole construction}\label{sec:dipole}
+%==================================================================================================
+
+\begin{definition}\label{def:dipole}
+Let $1\le\ell\le h\le n-2$ and $\alpha\in\R$, and put $K=n-1-h$ and $M=n-\ell$, so that $K\ge1$ and
+$K+1\le M\le n-1$. For integers $x\ge0$ and $L\ge0$ let
+\[
+  q_L(x)=\ind{x\ge L+1}\bigl(2x(x-1)-2L^2\bigr),\qquad
+  \cQ(x)=q_K(x)-q_M(x)+2(K+1)\alpha\,\ind{K+2\le x\le2K+2},
+\]
+and define $\vartheta:\N\to\R$ by $\vartheta(0)=\vartheta(1)=0$ and
+\[
+  \vartheta(x)=\frac{\cQ(x)}{x(x-1)}-\vartheta(x-1)\qquad(x\ge2).
+\]
+Set $\sT(s)=\vartheta(n-s)$ for $0\le s\le n$ and $\sT(s)=0$ for $s>n$,
+\[
+  \sH(u)=\sT(u)-\alpha\ind{u=h},\qquad \sG(u)=\alpha\ind{u\le2h-n-1},
+\]
+and let $Y^\alpha$ be the T/H/G matrix $Y[\sT,\sH,\sG]$ of the $n$-box.
+\end{definition}
+
+Here $x=n-s$ is the natural coordinate: $\vartheta$ depends only on $K$, $M$ and $\alpha$, not on $n$,
+which only truncates the range to $x\le n$. The pair ($-\alpha$ at the Hankel level $h$, $+\alpha$ on the
+antidiagonal cells with $|i-j|\le2h-n-1$) is the \emph{dipole}; for $\alpha=0$ the construction is the
+difference $\cR^h_n-\cR^{\ell-1}_n$ of two renewal squares (Remark~\ref{rem:parity}). In Lean,
+$\cQ$, $\vartheta$ and $Y^\alpha$ are \lean{dipQ}, \lean{dipTau} and \lean{dipU}; Lean's definition
+$\vartheta(x+1)=\cQ(x+1)/((x+1)x)-\vartheta(x)$ for all $x\ge0$ gives the same values, because Lean
+divides by zero to zero at $x=0$.
+
+\begin{lemma}\label{lem:Qdiff}
+For every $x\ge0$,
+\[
+  \cQ(x+1)-\cQ(x)=x\Bigl(2\ind{x\ge K}+2\ind{x\ge K+1}-2\ind{x\ge M}-2\ind{x\ge M+1}
+  +2\alpha\ind{x=K+1}-\alpha\ind{x=2K+2}\Bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+$q_L(x+1)-q_L(x)$ equals $4x$ if $x\ge L+1$, $2L=2x$ if $x=L$, and $0$ if $x<L$; that is,
+$x(2\ind{x\ge L}+2\ind{x\ge L+1})$. The window term changes by $+2(K+1)\alpha=2\alpha x$ at $x=K+1$ and
+by $-2(K+1)\alpha=-\alpha x$ at $x=2K+2$.
+\end{proof}
+
+\begin{proposition}\label{prop:dipole}
+In the setting of Definition~\ref{def:dipole}:
+\begin{enumerate}
+\item[(a)] for every $\alpha$, $\run_s(Y^\alpha)=r_s=\#\{a\in[\ell,h]:a\ge s\}$ for all $s\ge0$;
+\item[(b)] if $\alpha=0$ or $2h\ge n$, all rows of $Y^\alpha$ have sum $\ms(\ell,h)/n$;
+\item[(c)] if moreover
+\begin{align}
+  0\le\vartheta(x)+\vartheta(y)-\alpha\ind{y=K+1}\le2&\quad\text{for all }1\le y<x\le n\text{ with }x-y\text{ odd},
+  \tag{CELL1}\label{eq:cell1}\\
+  0\le\vartheta(x)+\alpha\ind{x\ge2K+3}\le2&\quad\text{for all odd }x\text{ with }1\le x\le n,
+  \tag{CELL2}\label{eq:cell2}
+\end{align}
+then $Y^\alpha$ is an interval uniformisation of $[\ell,h]$ in the $n$-box.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Note $n\ge3$. (a) By Lemma~\ref{lem:thgruns}(a), $\run_s=0=r_s$ for $s\ge n$. Next,
+$\run_{n-1}=\frac12(\vartheta(1)+\alpha\ind{n-1\le2h-n-1})=0=r_{n-1}$, because $h\le n-2$. And
+$\run_{n-2}=\vartheta(2)+\vartheta(1)-\alpha\ind{n-1=h}=\vartheta(2)=\cQ(2)/2=\ind{K=1}=\ind{h=n-2}=r_{n-2}$,
+since $\cQ(2)=q_K(2)=2$ if $K=1$ and $\cQ(2)=0$ if $K\ge2$ (recall $M\ge2$). Since $r$ and $\run$ agree for
+$s\in\{n-2,n-1\}$ and all $s\ge n$, it suffices by Lemma~\ref{lem:thgruns}(d) to show, for
+$0\le s\le n-3$ and $y=n-s-2\ge1$,
+\begin{equation}\label{eq:runstep}
+  (n-s)\sT(s)-(n-s-2)\sT(s+2)+2\sH(s+1)+\ind{y\text{ odd}}\bigl(\sG(s)-\sG(s+2)\bigr)=2(r_s-r_{s+2}).
+\end{equation}
+Since $s+1=h$ iff $y=K$, the first three terms equal
+\begin{align*}
+  &(y+2)\bigl(\vartheta(y+2)+\vartheta(y+1)\bigr)-y\bigl(\vartheta(y+1)+\vartheta(y)\bigr)-2\alpha\ind{y=K}\\
+  &\qquad=\frac{\cQ(y+2)-\cQ(y+1)}{y+1}-2\alpha\ind{y=K},
+\end{align*}
+by the definition of $\vartheta$ (at $y+2\ge3$ and $y+1\ge2$). By Lemma~\ref{lem:Qdiff} at $x=y+1$ this is
+$2\ind{y\ge K-1}+2\ind{y\ge K}-2\ind{y\ge M-1}-2\ind{y\ge M}-\alpha\ind{y=2K+1}$. Next,
+$\sG(s)-\sG(s+2)=\alpha\ind{s\in\{2h-n-2,2h-n-1\}}$, and $s=2h-n-1$ iff $y=2K+1$ (odd), while
+$s=2h-n-2$ iff $y=2K+2$ (even); so the last term of \eqref{eq:runstep} is $\alpha\ind{y=2K+1}$. Hence the
+left side of \eqref{eq:runstep} is $2\ind{K-1\le y\le M-2}+2\ind{K\le y\le M-1}$. On the right,
+$r_s-r_{s+2}=\ind{\ell\le s\le h}+\ind{\ell\le s+1\le h}$, and $\ell\le s\le h$ iff $K-1\le y\le M-2$,
+$\ell\le s+1\le h$ iff $K\le y\le M-1$.
+
+(b) By Lemma~\ref{lem:thgrows} with $\sT-\sH=\alpha\ind{\cdot=h}$,
+\begin{multline*}
+  2\row_{r+1}-2\row_r\\
+  =\alpha\bigl(\ind{r=h-1}-\ind{r=n-1-h}\bigr)+\sG(|2r+3-n|)-\sG(|2r+1-n|).
+\end{multline*}
+If $\alpha=0$ this vanishes. Let $2h\ge n$. One checks $|2r+1-n|\le2h-n-1$ iff $n-h\le r\le h-1$; hence
+$\sG(|2r+3-n|)-\sG(|2r+1-n|)=\alpha(\ind{n-h-1\le r\le h-2}-\ind{n-h\le r\le h-1})=\alpha(\ind{r=n-h-1}-\ind{r=h-1})$
+(both intervals are empty if $2h=n$). So all rows are equal, and Lemma~\ref{lem:rowvalue} gives their
+value.
+
+(c) By Lemma~\ref{lem:levels} it suffices to check \eqref{eq:cellTH} and \eqref{eq:cellTG}. For
+$0\le s<u\le n-1$ with $u-s$ odd put $x=n-s$, $y=n-u$: then $1\le y<x\le n$, $x-y$ is odd, and
+$\sT(s)+\sH(u)=\vartheta(x)+\vartheta(y)-\alpha\ind{y=K+1}$. For $s\le n-1$ with $n-s$ odd, $x=n-s$ is
+odd and $\sT(s)+\sG(s)=\vartheta(x)+\alpha\ind{x\ge2K+3}$, because $s\le2h-n-1$ iff $x\ge2n-2h+1=2K+3$.
+\end{proof}
+
+In Lean: \lean{dipQ\_succ}, \lean{dip\_run}, \lean{dip\_row\_succ}, \lean{isIntervalUnif\_dip}
+(\lean{DipoleUnif.lean}). It remains to choose $\alpha$ so that \eqref{eq:cell1} and \eqref{eq:cell2}
+hold. For this we need a closed form of $\vartheta$, which involves the following special functions.
+
+%==================================================================================================
+\section{Special functions and the facts F1--F6}\label{sec:special}
+%==================================================================================================
+
+\begin{definition}\label{def:special}
+For integers $x\ge1$, $K\ge0$ and $k\ge1$ let
+\[
+  \cB(x)=\sum_{j\ge0}\frac{(-1)^j}{x+j},\qquad \sigma(x)=4\cB(x)-\frac2x,\qquad
+  a(K)=4K^2\cB(K+1)+1-2K,
+\]
+\[
+  \Omega(k)=\sum_{y=k+1}^{2k}(-1)^y\frac{k}{y(y-1)}\in\mathbb{Q},\qquad w(K)=(-1)^K\,\Omega(K+1).
+\]
+\end{definition}
+
+The series defining $\cB$ converges by the alternating series test. $\cB$ is Nielsen's beta function
+at integer arguments: $\cB(1)=\ln2$ and $\cB(m+1)=(-1)^m(\ln2-\sum_{i=1}^m(-1)^{i-1}/i)$, which gives
+the formula for $a(K)$ in the introduction; for instance $a(1)=3-4\ln2\approx0.2274$,
+$a(2)=16\ln2-11\approx0.0904$, $a(3)=25-36\ln2\approx0.0467$. Also $\Omega(2)=-\frac16$,
+$\Omega(3)=\frac15$, $\Omega(4)=-\frac{19}{210}$. These closed forms are not used below. In Lean,
+$\cB$, $\sigma$, $a$, $\Omega$, $w$ are \lean{betaF} (defined as the limit of the partial sums),
+\lean{sigmaF}, \lean{aF}, \lean{omegaF}, \lean{wF} (\lean{UnifFacts.lean}).
+
+\begin{lemma}[alternating recursions]\label{lem:alt}
+Let $x_0\in\N$ and $f,c:\{x_0,x_0+1,\dots\}\to\R$ with $f(x)+f(x+1)=c(x)$ for all $x\ge x_0$, $c$
+nonincreasing and $f(x)\to0$. Then $0\le f(x)\le c(x)$ for all $x\ge x_0$. If moreover $x\mapsto c(x)-c(x+1)$
+is nonincreasing, then
+\[
+  \tfrac12c(x)\le f(x)\le\tfrac12c(x)+\tfrac12\bigl(c(x)-c(x+1)\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+$f(x+2)-f(x)=c(x+1)-c(x)\le0$, so $N\mapsto f(x+2N)$ is nonincreasing with limit $0$; hence $f(x)\ge0$, and
+$f(x)=c(x)-f(x+1)\le c(x)$. For the second part apply the first to $g(x)=f(x)-f(x+1)$, which satisfies
+$g(x)+g(x+1)=c(x)-c(x+1)$ and $g\to0$: then $0\le g(x)\le c(x)-c(x+1)$, and $2f(x)=c(x)+g(x)$.
+\end{proof}
+
+\begin{lemma}\label{lem:B}
+For integers $x\ge1$: $\cB(x)+\cB(x+1)=\frac1x$, $0\le\cB(x)\le\frac1x$, and $\cB(x)\to0$.
+\end{lemma}
+
+\begin{proof}
+The partial sums satisfy $\sum_{j<N+1}\frac{(-1)^j}{x+j}=\frac1x-\sum_{j<N}\frac{(-1)^j}{x+1+j}$; let
+$N\to\infty$. The partial sums of even length are $\le\cB(x)$ and those of odd length are $\ge\cB(x)$,
+which gives $0\le\cB(x)\le1/x$.
+\end{proof}
+
+\begin{lemma}[Lemma B]\label{lem:lemmaB}
+Let $u(x)=\frac1{2x}+\frac1{4x^2}-\frac1{8x^4}+\frac1{4x^6}$ and
+$\varepsilon(x)=\frac{17x^4+34x^3+29x^2+12x+2}{8x^6(x+1)^6}$. For every integer $x\ge1$,
+\[
+  u(x)-\varepsilon(x)\le\cB(x)\le u(x) .
+\]
+\end{lemma}
+
+\begin{proof}
+A direct computation gives $u(x)+u(x+1)-\frac1x=\varepsilon(x)$ and
+$\varepsilon(x)-\varepsilon(x+1)=\frac{17x^4+68x^3+100x^2+64x+16}{x^6(x+1)(x+2)^6}>0$. So
+$f=u-\cB$ satisfies $f(x)+f(x+1)=\varepsilon(x)$ (Lemma~\ref{lem:B}) with $\varepsilon$ nonincreasing, and
+$f\to0$. Lemma~\ref{lem:alt} gives $0\le f\le\varepsilon$.
+\end{proof}
+
+\begin{lemma}[properties of $\sigma$]\label{lem:sigma}
+Let $x,M\ge1$ and $0\le K\le M$ be integers.
+\begin{enumerate}
+\item[(i)] $\sigma(x)+\sigma(x+1)=\frac2{x(x+1)}$.
+\item[(ii)] $\frac1{x(x+1)}\le\sigma(x)\le\frac{x+4}{x(x+1)(x+2)}$; in particular $\sigma(x)>0$,
+$\sigma(4)\le\frac1{15}$ and $\sigma(5)\le\frac3{70}$.
+\item[(iii)] $\sigma(x+1)<\sigma(x)$.
+\item[(iv)] $a(K)=\frac2{K+1}-1+K^2\sigma(K+1)$, and $a(M)=1-M^2\sigma(M)$.
+\item[(v)] $M^2\sigma(M+1)\le1-\frac1{M+1}$.
+\item[(vi)] $(M^2-K^2)\sigma(x)\le1-\frac1{M+1}$ for $x\ge M+1$.
+\item[(vii)] $(M^2-K^2)\sigma(M+1)+a(M)\le1-K^2\sigma(M+1)$.
+\item[(viii)] $1-K^2\sigma(x)\ge\frac2{K+1}-a(K)$ for $x\ge K+1$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) follows from $\cB(x)+\cB(x+1)=1/x$. (ii) Apply the second part of Lemma~\ref{lem:alt} to
+$f=\sigma$, $c(x)=\frac2{x(x+1)}$, for which $c(x)-c(x+1)=\frac4{x(x+1)(x+2)}$ is nonincreasing, and
+$\sigma\to0$. (iii) By (ii) at $x+1$ and since $x(x+5)<(x+2)(x+3)$,
+$\sigma(x+1)\le\frac{x+5}{(x+1)(x+2)(x+3)}<\frac1{x(x+1)}$; by (i),
+$\sigma(x)=\frac2{x(x+1)}-\sigma(x+1)>\frac1{x(x+1)}>\sigma(x+1)$. (iv) The first identity is the
+definition rewritten with $\sigma(K+1)=4\cB(K+1)-\frac2{K+1}$; the second follows from the first (at $K=M$)
+and (i) at $x=M$. (v) By (ii),
+$M^2\sigma(M+1)\le\frac{M^2(M+5)}{(M+1)(M+2)(M+3)}\le\frac M{M+1}$, since $M(M+5)\le(M+2)(M+3)$.
+(vi) By (iii), $0<\sigma(x)\le\sigma(M+1)$, and $0\le M^2-K^2\le M^2$; use (v). (vii) By (iv),
+the left side is $2M^2\sigma(M+1)-K^2\sigma(M+1)+\frac2{M+1}-1$; use (v). (viii) By (iii) and (iv),
+$1-K^2\sigma(x)\ge1-K^2\sigma(K+1)=\frac2{K+1}-a(K)$.
+\end{proof}
+
+\begin{lemma}\label{lem:omega}
+For $k\ge1$, $\Omega(k)=(-1)^k\bigl(2k\cB(k+1)-1\bigr)+2k\cB(2k)-\frac12$. Consequently, for $K\ge0$,
+\[
+  w(K)=\begin{cases}
+  \tfrac32-2(K+1)\bigl(\cB(K+2)+\cB(2K+2)\bigr), & K\text{ odd},\\[2pt]
+  \tfrac12-2(K+1)\cB(K+2)+2(K+1)\cB(2K+2), & K\text{ even}.
+  \end{cases}
+\]
+\end{lemma}
+
+\begin{proof}
+Write $\frac k{y(y-1)}=k(\frac1{y-1}-\frac1y)$, so
+$\Omega(k)=-k\bigl(\sum_{z=k}^{2k-1}\frac{(-1)^z}z+\sum_{y=k+1}^{2k}\frac{(-1)^y}y\bigr)$. By
+Lemma~\ref{lem:B}, $\sum_{z=a}^{a+N-1}\frac{(-1)^z}{z}=(-1)^a\cB(a)-(-1)^{a+N}\cB(a+N)$. Hence
+$\Omega(k)=-k\bigl((-1)^k(\cB(k)-\cB(k+1))-\cB(2k)+\cB(2k+1)\bigr)$, and $\cB(k)=\frac1k-\cB(k+1)$,
+$\cB(2k+1)=\frac1{2k}-\cB(2k)$ give the formula. For $w(K)$ take $k=K+1$ and multiply by $(-1)^K$.
+\end{proof}
+
+\begin{proposition}[facts F1--F6]\label{prop:facts}
+\begin{enumerate}
+\item[F1] $a(K)>0$ for all $K\ge0$.
+\item[F2] $a(K+1)<a(K)$ for all $K\ge0$.
+\item[F3] $a(K)+a(K+1)\le\frac1{2(K+1)}$ for all $K\ge2$.
+\item[F4] $w(K)>0$ and $(K+1)\bigl(a(K)+a(K+1)\bigr)\le4w(K)$ for all $K\ge2$.
+\item[F5] $a(1)-\frac2{21}-a(3)>0$, $\;a(1)-\frac2{21}+a(2)\le\frac27$, and $a(1)<\frac5{21}$.
+\item[F6] $a(1)<\frac14$ and $a(3)<\frac1{20}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Put $\aup(K)=4K^2u(K+1)+1-2K$ and $\alo(K)=4K^2\bigl(u(K+1)-\varepsilon(K+1)\bigr)+1-2K$. By
+Lemma~\ref{lem:lemmaB} at $x=K+1$, $\alo(K)\le a(K)\le\aup(K)$ for all $K\ge0$.
+
+F1: $a(K)\ge\alo(K)$, which is a quotient of polynomials with positive coefficients by \eqref{eq:A1}.
+
+F2: $a(K)-a(K+1)\ge\alo(K)-\aup(K+1)>0$ by \eqref{eq:A2}.
+
+F3: for $K=k+2$, $\frac1{2(K+1)}-a(K)-a(K+1)\ge\frac1{2(K+1)}-\aup(K)-\aup(K+1)\ge0$ by \eqref{eq:A3}.
+
+F4: let $K=k+2\ge2$. If $K$ is odd, Lemma~\ref{lem:omega} and the upper bounds of Lemma~\ref{lem:lemmaB}
+at $K+2$ and $2K+2$ give $w(K)\ge w^-_{\mathrm{odd}}(K):=\frac32-2(K+1)\bigl(u(K+2)+u(2K+2)\bigr)$,
+which is positive by \eqref{eq:A4}; and by \eqref{eq:A5},
+\[
+  (K+1)\bigl(a(K)+a(K+1)\bigr)\le(K+1)\bigl(\aup(K)+\aup(K+1)\bigr)\le4w^-_{\mathrm{odd}}(K)\le4w(K).
+\]
+If $K$ is even, the upper bound at $K+2$ and the lower bound at $2K+2$ give
+$w(K)\ge w^-_{\mathrm{even}}(K):=\frac12-2(K+1)u(K+2)+2(K+1)\bigl(u(2K+2)-\varepsilon(2K+2)\bigr)$, which is
+positive by \eqref{eq:A6}, and \eqref{eq:A7} gives the second inequality in the same way.
+
+F5, F6: Lemma~\ref{lem:lemmaB} at $x=2,3,4$ gives exact rational enclosures. With
+$u(2)=\frac{79}{256}$, $u(3)=\frac{1127}{5832}$, $u(4)=\frac{2297}{16384}$ and the values of $\varepsilon$,
+\begin{gather*}
+  a(1)\in\Bigl[\tfrac{15}{64}-\tfrac{343}{46656},\ \tfrac{15}{64}\Bigr],\qquad
+  a(2)\in\Bigl[\tfrac{67}{729}-\tfrac{1297}{746496},\ \tfrac{67}{729}\Bigr],\\
+  a(3)\in\Bigl[\tfrac{193}{4096}-\tfrac{31689}{64000000},\ \tfrac{193}{4096}\Bigr],
+\end{gather*}
+that is $0.22702\le a(1)\le0.23438$, $0.09016\le a(2)\le0.09191$ and $0.04662\le a(3)\le0.04712$. Hence
+$a(1)-\frac2{21}-a(3)\ge0.0846$, $a(1)-\frac2{21}+a(2)\le0.2311<\frac27$, $a(1)\le\frac{15}{64}<\frac5{21}$,
+$a(1)<\frac14$ and $a(3)\le\frac{193}{4096}<\frac1{20}$.
+\end{proof}
+
+The polynomial identities \eqref{eq:A1}--\eqref{eq:A7} are listed in Appendix~\ref{app:poly}; they are
+identities of rational functions, which can be checked by clearing denominators and expanding. In
+Lean they are proved by \lean{field\_simp; ring} (\lean{poly\_F1} to \lean{poly\_F4d}), and F1--F6 are
+\lean{factF1} to \lean{factF6} (\lean{UnifFacts.lean}); the Lean proof of F5, F6 uses the slightly weaker
+decimal enclosures $0.227<a(1)<0.2344$, $0.0901<a(2)<0.092$, $0.0466<a(3)<0.0472$.
+
+\begin{corollary}\label{cor:facts}
+\textup{(a)} $a(L)\le a(K)$ for $L\ge K\ge0$. \textup{(b)} $a(K)<\frac1{2(K+1)}$ for $K\ge1$.
+\end{corollary}
+
+\begin{proof}
+(a) is F2. (b) For $K=1$ this is F6; for $K\ge2$ it follows from F3 and $a(K+1)>0$ (F1).
+\end{proof}
+
+%==================================================================================================
+\section{Closed form of \texorpdfstring{$\vartheta$}{theta}}\label{sec:closed}
+%==================================================================================================
+
+Throughout this section we are in the setting of Definition~\ref{def:dipole} with any $\alpha\in\R$.
+Let $\Gamma=M^2-K^2$ and, for integers $x,y\ge1$,
+\[
+  \Phi(x)=\begin{cases}1-K^2\sigma(x), & x\le M,\\ \Gamma\,\sigma(x), & x\ge M+1,\end{cases}\qquad
+  b(y)=\begin{cases}\dfrac{2(K+1)\alpha}{y(y-1)}, & K+2\le y\le2K+2,\\[4pt] 0, & \text{otherwise},\end{cases}
+\]
+and $\psi(x)=\vartheta(x)-\Phi(x)$ (the ``alternating part'').
+
+\begin{lemma}\label{lem:closed}
+\textup{(a)} $\vartheta(x)=0$ for $0\le x\le K$.
+\textup{(b)} $\vartheta(K+1)=\frac2{K+1}$ and $\psi(K+1)=a(K)$.
+\textup{(c)} For $x\ge K+1$, $\psi(x+1)=-\psi(x)+b(x+1)-\ind{x=M}\,a(M)$.
+\end{lemma}
+
+\begin{proof}
+(a) $\cQ(x)=0$ for $x\le K$, since $x<K+1<M+1$ and $x<K+2$; so $\vartheta(x)=-\vartheta(x-1)=0$ for
+$2\le x\le K$ by induction. (b)
+$\cQ(K+1)=q_K(K+1)=2(K+1)K-2K^2=2K$, so $\vartheta(K+1)=\frac{2K}{(K+1)K}-\vartheta(K)=\frac2{K+1}$; then
+$\psi(K+1)=\frac2{K+1}-1+K^2\sigma(K+1)=a(K)$ by Lemma~\ref{lem:sigma}(iv). (c) For $x\ge K+1$,
+$\vartheta(x+1)+\vartheta(x)=\cQ(x+1)/(x(x+1))$ with
+\[
+  \cQ(x+1)=\begin{cases}2x(x+1)-2K^2+b(x+1)x(x+1), & x+1\le M,\\ 2M^2-2K^2+b(x+1)x(x+1), & x+1\ge M+1.\end{cases}
+\]
+If $x+1\le M$, Lemma~\ref{lem:sigma}(i) gives $\Phi(x+1)+\Phi(x)=2-\frac{2K^2}{x(x+1)}$, so
+$\psi(x+1)+\psi(x)=b(x+1)$. If $x\ge M+1$, $\Phi(x+1)+\Phi(x)=\frac{2\Gamma}{x(x+1)}$ and again
+$\psi(x+1)+\psi(x)=b(x+1)$. If $x=M$,
+$\Phi(M+1)+\Phi(M)=\Gamma\sigma(M+1)+1-K^2\sigma(M)=\frac{2\Gamma}{M(M+1)}+1-M^2\sigma(M)
+=\frac{2\Gamma}{M(M+1)}+a(M)$ by Lemma~\ref{lem:sigma}(i),(iv), so $\psi(M+1)+\psi(M)=b(M+1)-a(M)$.
+\end{proof}
+
+Unwinding the recursion, for $x\ge K+1$,
+\begin{equation}\label{eq:psiclosed}
+  \psi(x)=(-1)^x\Bigl((-1)^{K+1}a(K)+\sum_{y=K+2}^{x}(-1)^yb(y)+\ind{x\ge M+1}(-1)^Ma(M)\Bigr).
+\end{equation}
+
+\begin{remark}[the parity mode and the dipole]\label{rem:parity}
+For $x\ge\max(M+1,2K+2)$, \eqref{eq:psiclosed} and $\sum_{y=K+2}^{2K+2}(-1)^yb(y)=2\alpha\,\Omega(K+1)$ give
+$\vartheta(x)=\Gamma\sigma(x)+(-1)^x\bigl(A_{\mathrm{ren}}+2\alpha\,\Omega(K+1)\bigr)$ with
+$A_{\mathrm{ren}}=(-1)^{K+1}a(K)+(-1)^Ma(M)$, which is nonzero because $a(K)>a(M)>0$. Without a dipole
+($\alpha=0$) the smooth part $\Gamma\sigma(x)\approx\Gamma/x^2$ eventually becomes smaller than the parity
+amplitude $|A_{\mathrm{ren}}|$, and cells can become negative when $n$ is large compared with $K$: for
+example, for $(n,\ell,h)=(12,10,10)$ the matrix $Y^0=\cR^{10}_{12}-\cR^{9}_{12}$ has minimal entry
+$-677/4620$, attained at the central cells $(5,6)$ and $(6,5)$. (That $Y^0=\cR^h_n-\cR^{\ell-1}_n$ in
+general is not needed; it was checked for $n\le20$, Appendix~\ref{app:checks}.) The dipole amplitude
+\begin{equation}\label{eq:alphastar}
+  \alpha^*=\alpha^*(K,M)=-\frac{A_{\mathrm{ren}}}{2\,\Omega(K+1)}=\frac{a(K)-(-1)^{K+M}a(M)}{2\,w(K)}
+\end{equation}
+cancels this parity mode exactly. (In Lean: \lean{alphaStar}.)
+\end{remark}
+
+In Lean, Lemma~\ref{lem:closed} is \lean{dipTau\_low}, \lean{dipTau\_base}, \lean{dipS\_base} and
+\lean{dipS\_succ} (\lean{UnifAllN.lean}).
+
+%==================================================================================================
+\section{The case analysis}\label{sec:cases}
+%==================================================================================================
+
+Throughout, $1\le\ell\le h\le n-2$, $K=n-1-h$, $M=n-\ell$, and $\vartheta$, $\Phi$, $\psi$, $b$ are as in
+Sections~\ref{sec:dipole}--\ref{sec:closed}. Every pair $(n,[\ell,h])$ falls into exactly one of the cases
+(C) $n\le2K+1$; (D) $n\ge2K+2$ and $K=1$; (E) $n\ge2K+2$ and $K\ge2$. We repeatedly use that
+$(-1)^{x+c}=-(-1)^{y+c}$ when $x-y$ is odd, and Corollary~\ref{cor:facts}: for $M\ge K+1$,
+$0<a(M)\le a(K+1)<a(K)$.
+
+\subsection{Case (C): no dipole}
+
+\begin{proposition}\label{prop:caseC}
+If $n\le2K+1$, then $Y^0$ satisfies \eqref{eq:cell1} and \eqref{eq:cell2}; hence it is an interval
+uniformisation of $[\ell,h]$.
+\end{proposition}
+
+\begin{proof}
+If $K=1$ then $n\le3$, which forces $(n,\ell,h)=(3,1,1)$ and $M=2$. Here
+$\vartheta(0),\dots,\vartheta(3)=0,0,1,0$ ($\cQ(2)=2$, $\cQ(3)=q_1(3)-q_2(3)=10-4=6$), the pairs in
+\eqref{eq:cell1} are $(x,y)=(2,1),(3,2)$ with sums $1,1$, and $\vartheta(1)=\vartheta(3)=0$.
+
+Let $K\ge2$ and $\alpha=0$, so $b\equiv0$. By Lemma~\ref{lem:closed} and induction, for $x\ge K+1$,
+\[
+  \vartheta(x)=\Phi(x)+(-1)^{x+K+1}a(K)+\ind{x\ge M+1}(-1)^{x+M}a(M).
+\]
+\emph{Bounds for single $x\le n$.} If $x\le K$, $\vartheta(x)=0$. If $K+1\le x\le M$, by
+Lemma~\ref{lem:sigma}(viii) and Corollary~\ref{cor:facts}(b),
+$\vartheta(x)\ge\frac2{K+1}-2a(K)>\frac2{K+1}-\frac1{K+1}>0$. If $M+1\le x\le n\le2K+1$, then
+$\Gamma\ge(K+1)^2-K^2=2K+1$ and, by Lemma~\ref{lem:sigma}(ii),(iii),
+$\sigma(x)\ge\sigma(2K+1)\ge\frac1{(2K+1)(2K+2)}$, so
+$\vartheta(x)\ge\Gamma\sigma(x)-a(K)-a(K+1)\ge\frac1{2(K+1)}-a(K)-a(K+1)\ge0$ by F3. For the upper
+bound, $\Phi(x)\le1$ (for $x\le M$ since $\sigma>0$; for $x>M$ by Lemma~\ref{lem:sigma}(vi)), so
+$\vartheta(x)\le1+a(K)+a(K+1)\le1+\frac1{2(K+1)}<2$ by F3.
+
+\emph{Pairs.} Let $K+1\le y<x\le n$ with $x-y$ odd. The $a(K)$ terms cancel. If $x\le M$:
+$\vartheta(x)+\vartheta(y)=2-K^2(\sigma(x)+\sigma(y))\le2$. If $y\le M<x$: using
+$\Gamma\sigma(x)\le\Gamma\sigma(M+1)$ and Lemma~\ref{lem:sigma}(vii),
+$\vartheta(x)+\vartheta(y)\le\Gamma\sigma(M+1)+a(M)+1-K^2\sigma(y)\le2-K^2\sigma(M+1)-K^2\sigma(y)\le2$.
+If $M<y$: the $a(M)$ terms cancel too, and $\vartheta(x)+\vartheta(y)=\Gamma(\sigma(x)+\sigma(y))\le2-\frac2{M+1}$
+by Lemma~\ref{lem:sigma}(vi).
+
+\emph{Conclusion.} In \eqref{eq:cell1} (with $\alpha=0$) both terms are $\ge0$; if $y\le K$ then
+$\vartheta(y)=0$ and $\vartheta(x)\le2$, otherwise the pair bound applies. \eqref{eq:cell2} is
+$0\le\vartheta(x)\le2$.
+\end{proof}
+
+In Lean: \lean{dipS\_C}, \lean{caseC\_bounds}, \lean{caseC\_cells}, \lean{caseC\_K1\_cells}.
+
+\subsection{Case (E): one dipole of amplitude \texorpdfstring{$\alpha^*$}{alpha*}}
+
+\begin{lemma}\label{lem:tail}
+Let $\alpha\ge0$ and $\tail(x)=\sum_{j\ge0}(-1)^jb(x+1+j)$ (a finite sum). Then
+$\tail(x)=b(x+1)-\tail(x+1)$, $\tail(x)=0$ for $x\ge2K+2$, $\tail(K+1)=2\alpha\,w(K)$, and
+$0\le\tail(x)\le b(x+1)$ for $x\ge K+1$.
+\end{lemma}
+
+\begin{proof}
+The first two statements are immediate. With $y=K+2+j$,
+$\tail(K+1)=\sum_{j=0}^{K}(-1)^j\frac{2(K+1)\alpha}{(K+2+j)(K+1+j)}$, while
+$w(K)=(-1)^K\sum_{y=K+2}^{2K+2}(-1)^y\frac{K+1}{y(y-1)}=\sum_{j=0}^{K}(-1)^j\frac{K+1}{(K+2+j)(K+1+j)}$.
+For $x\ge K+1$ the sequence $b(x+1),b(x+2),\dots$ is nonnegative and nonincreasing, so its alternating
+sum lies in $[0,b(x+1)]$.
+\end{proof}
+
+\begin{lemma}\label{lem:alphastar}
+If $K\ge2$ and $M\ge K+1$, then $0<\alpha^*\le\frac2{K+1}$.
+\end{lemma}
+
+\begin{proof}
+By F4, $w(K)>0$. The numerator of \eqref{eq:alphastar} is $\ge a(K)-a(M)>0$ and
+$\le a(K)+a(M)\le a(K)+a(K+1)\le\frac{4w(K)}{K+1}$ by F4.
+\end{proof}
+
+\begin{proposition}\label{prop:caseE}
+If $K\ge2$ and $n\ge2K+2$, then $Y^{\alpha^*}$ satisfies \eqref{eq:cell1} and \eqref{eq:cell2}; hence it
+is an interval uniformisation of $[\ell,h]$.
+\end{proposition}
+
+\begin{proof}
+Write $\alpha=\alpha^*$. By Proposition~\ref{prop:dipole}(b) the condition $2h\ge n$ is needed for the
+rows; it is equivalent to $n\ge2K+2$. We show the cell inequalities for all $x,y\ge1$, not only
+$x\le n$.
+
+\emph{Closed form.} For $x\ge K+1$,
+\begin{equation}\label{eq:psiE}
+  \psi(x)=\tail(x)-\ind{x\le M}(-1)^{x+M}a(M).
+\end{equation}
+For $x=K+1$: by Lemma~\ref{lem:tail} and \eqref{eq:alphastar}, the right side is
+$2\alpha w(K)+(-1)^{K+M}a(M)=a(K)=\psi(K+1)$. If \eqref{eq:psiE} holds at $x\ge K+1$, then by
+Lemma~\ref{lem:closed}(c) and Lemma~\ref{lem:tail},
+$\psi(x+1)=\tail(x+1)+\ind{x\le M}(-1)^{x+M}a(M)-\ind{x=M}a(M)$, which is \eqref{eq:psiE} at $x+1$ (for
+$x<M$ directly; for $x=M$ the two $a(M)$ terms cancel; for $x>M$ both vanish).
+
+\emph{Auxiliary bounds.} By Lemma~\ref{lem:alphastar}, $(K+1)\alpha\le2$, so for $z\ge K+1$,
+$\tail(z)\le b(z+1)\le\frac4{z(z+1)}\le K^2\sigma(z)$ (Lemma~\ref{lem:sigma}(ii) and $K^2\ge4$) and
+$\tail(z)\le\frac4{12}=\frac13$ (as $z\ge3$). Also $a(M)\le a(1)<\frac14$ and $a(M)\le a(K+1)<a(K)<\frac1{2(K+1)}$.
+
+\emph{Lower bound $\vartheta\ge0$.} For $x\le K$, $\vartheta(x)=0$. For $K+1\le x\le M$, by
+Lemma~\ref{lem:sigma}(viii), $\vartheta(x)\ge\frac2{K+1}-a(K)+0-a(M)>\frac2{K+1}-2a(K)>0$. For $x\ge M+1$,
+$\vartheta(x)=\Gamma\sigma(x)+\tail(x)\ge0$.
+
+\emph{Upper bounds.} $\Phi(x)\le1$ for $x\ge K+1$, so $\vartheta(x)\le1+\frac13+\frac14<2$ for all $x$. For
+$x\ge2K+3$, $\tail(x)=0$ and $\alpha\le\frac2{K+1}\le\frac23$, so $\vartheta(x)+\alpha\le1+\frac14+\frac23<2$.
+
+\emph{Pairs.} Let $K+1\le y<x$ with $x-y$ odd; we show $\vartheta(x)+\vartheta(y)\le2$. If $x\le M$, the
+$a(M)$ terms cancel and $\vartheta(x)+\vartheta(y)=2-K^2\sigma(x)+\tail(x)-K^2\sigma(y)+\tail(y)\le2$. If
+$y\le M<x$, then $\tail(x)\le\frac4{(M+1)(M+2)}\le K^2\sigma(M+1)$ and $\tail(y)\le K^2\sigma(y)$, so by
+Lemma~\ref{lem:sigma}(vii),
+\begin{align*}
+  \vartheta(x)+\vartheta(y)&\le\bigl(\Gamma\sigma(M+1)+a(M)\bigr)+\tail(x)+1-K^2\sigma(y)+\tail(y)\\
+  &\le\bigl(1-K^2\sigma(M+1)\bigr)+K^2\sigma(M+1)+1=2 .
+\end{align*}
+If $M<y$, then $\vartheta(x)+\vartheta(y)\le2\bigl(1-\frac1{M+1}\bigr)+\frac4{x(x+1)}+\frac4{y(y+1)}\le2$,
+since $x,y\ge M+1\ge4$ gives $\frac4{z(z+1)}\le\frac1{M+1}$ for $z\in\{x,y\}$.
+
+\emph{Conclusion.} \eqref{eq:cell1}: if $y=K+1$, then $\vartheta(y)-\alpha=\frac2{K+1}-\alpha\ge0$ gives the
+lower bound, and $\vartheta(x)+\vartheta(K+1)-\alpha\le\vartheta(x)+\vartheta(K+1)\le2$ by the pair bound.
+If $y\ne K+1$, the lower bound is $\vartheta\ge0$; the upper bound is the single bound if $y\le K$ and
+the pair bound if $y\ge K+2$. \eqref{eq:cell2}: for $x\ge2K+3$ use $\vartheta(x)+\alpha\le2$, otherwise
+$0\le\vartheta(x)<2$.
+\end{proof}
+
+In Lean: \lean{alphaStar\_bounds}, \lean{dipTail\_base}, \lean{dipTail\_bounds}, \lean{dipS\_E},
+\lean{caseE\_cells\_gen}, \lean{caseE\_cells}.
+
+\subsection{Case (D): \texorpdfstring{$K=1$}{K=1} and one dipole of amplitude \texorpdfstring{$2/7$}{2/7}}
+
+\begin{proposition}\label{prop:caseD}
+If $K=1$ (i.e.\ $h=n-2$) and $n\ge4$, then $Y^{2/7}$ satisfies \eqref{eq:cell1} and \eqref{eq:cell2};
+hence it is an interval uniformisation of $[\ell,h]$.
+\end{proposition}
+
+\begin{proof}
+Let $\alpha=\frac27$; then $2h=2n-4\ge n$. Here $2\le M\le n-1$, $\Gamma=M^2-1$, $b(3)=\frac4{21}$,
+$b(4)=\frac2{21}$ and $b(y)=0$ for $y\ge5$. Put $e_P=a(1)-\frac2{21}$ and $A=e_P+(-1)^Ma(M)$.
+
+\emph{Values.} $\vartheta(1)=0$ and $\vartheta(2)=1$ (Lemma~\ref{lem:closed}). By Lemma~\ref{lem:closed},
+$\psi(2)=a(1)$, $\psi(3)=-a(1)+\frac4{21}-\ind{M=2}a(2)$, and for $x\ge4$
+\[
+  \psi(x)=(-1)^x\bigl(e_P+\ind{x\ge M+1}(-1)^Ma(M)\bigr)
+\]
+(check $x=4$ for $M=2$, $M=3$, $M\ge4$ separately, then induct with $b(x+1)=0$). Since $a(1)=\sigma(2)$,
+$a(2)=4\sigma(3)-\frac13$ and $\sigma(2)+\sigma(3)=\frac13$ (Lemma~\ref{lem:sigma}(i),(iv)), we get
+$\vartheta(3)=\frac67$ if $M\ge3$ and $\vartheta(3)=\frac4{21}$ if $M=2$. For $x\ge4$:
+$\vartheta(x)=1-\sigma(x)+(-1)^xe_P$ if $x\le M$, and $\vartheta(x)=\Gamma\sigma(x)+(-1)^xA$ if $x\ge M+1$.
+
+\emph{Constants.} By F5 and F1, $0<a(1)-\frac2{21}-a(3)<e_P<\frac5{21}-\frac2{21}=\frac17$. If $M$ is even,
+$A=e_P+a(M)\in(0,e_P+a(2)]\subseteq(0,\frac27]$ by F2 and F5; if $M$ is odd, then $M\ge3$ and
+$A=e_P-a(M)\ge e_P-a(3)>0$, $A<e_P<\frac27$. By Lemma~\ref{lem:sigma}(ii),(iii), $\sigma(x)\le\frac1{15}$ for
+$x\ge4$ and $\sigma(x)\le\frac3{70}$ for $x\ge5$. For $x\ge M+1$: $0\le\Gamma\sigma(x)\le1-\frac1{M+1}$ and
+$\Gamma\sigma(x)+a(M)\le\Gamma\sigma(M+1)+a(M)\le1-\sigma(M+1)<1$ (Lemma~\ref{lem:sigma}(vi),(vii)).
+
+\emph{Single $x\ge4$.} Even $x$: $0<\vartheta(x)\le1+e_P$ (for $x\le M$, $\vartheta(x)\ge\frac{14}{15}$; for
+$x>M$, $\vartheta(x)=\Gamma\sigma(x)+A>0$ and $\Gamma\sigma(x)+A\le\Gamma\sigma(x)+a(M)+e_P<1+e_P$). Odd $x$:
+$-\frac27\le\vartheta(x)\le1$ (for $x\le M$, $x\ge5$ and $\vartheta(x)=1-\sigma(x)-e_P\in[1-\frac3{70}-\frac17,1]$;
+for $x>M$, $\vartheta(x)=\Gamma\sigma(x)-A\in[-A,1-A]$).
+
+\emph{Pairs $4\le y<x$, $x-y$ odd.} If $x\le M$: $\vartheta(x)+\vartheta(y)=2-\sigma(x)-\sigma(y)\in[0,2]$. If
+$y\le M<x$: $\vartheta(x)+\vartheta(y)=\Gamma\sigma(x)+1-\sigma(y)-(-1)^{y+M}a(M)$, which is
+$\le\Gamma\sigma(M+1)+a(M)+1-\sigma(y)\le2$ and $\ge1-\frac1{15}-a(2)>0$. If $M<y$:
+$\vartheta(x)+\vartheta(y)=\Gamma(\sigma(x)+\sigma(y))\in[0,2]$.
+
+\emph{Conclusion.} \eqref{eq:cell1} with $y\ge4$ is the pair bound ($y\ne K+1=2$). For $y=1$ ($x$ even):
+$\vartheta(x)\in\{1\}\cup[0,1+e_P]$. For $y=2$ ($x$ odd, $\vartheta(2)-\alpha=\frac57$):
+$\vartheta(3)+\frac57\in\{\frac{19}{21},\frac{11}7\}$, and $\vartheta(x)+\frac57\in[\frac37,\frac{12}7]$ for
+$x\ge5$. For $y=3$ ($x\ge4$ even): $0\le\vartheta(x)+\vartheta(3)\le1+e_P+\frac67<2$. \eqref{eq:cell2}:
+$\vartheta(1)=0$, $\vartheta(3)\in[0,2]$, and for odd $x\ge5$ (where $x\ge2K+3$),
+$\vartheta(x)+\frac27\in[0,\frac97]$.
+\end{proof}
+
+In Lean: \lean{dipB\_D3}, \lean{dipB\_D4}, \lean{dipS\_D}, \lean{tauD\_three}, \lean{caseD\_cells}.
+
+\subsection{Proof of \texorpdfstring{Theorem~\ref{thm:unif}}{Theorem 3}}\label{sec:proofunif}
+Let $n\ge1$ and $0\le\ell\le h\le n-1$. Case (A), $h=n-1$: take $J_n$ if $\ell=0$ and
+$J_n-\cR^{\ell-1}_n$ if $\ell\ge1$ (Lemma~\ref{lem:compl}). Case (B), $\ell=0$ and $h\le n-2$: take the
+renewal square $\cR^h_n$ (Proposition~\ref{prop:renewal}). Otherwise $1\le\ell\le h\le n-2$, and
+Propositions~\ref{prop:caseC}, \ref{prop:caseD} and~\ref{prop:caseE} cover the three remaining cases
+(C), (D), (E). \qed
+
+In Lean this is \lean{intervalUnifAll\_all} (\lean{UnifAllN.lean}).
+
+%==================================================================================================
+\section{Formal verification}\label{sec:lean}
+%==================================================================================================
+
+\subsection{What is formalised}
+Theorem~\ref{thm:diag} is formalised, with its complete proof, in Lean~4 \cite{deMouraUllrich2021}
+using Mathlib \cite{mathlib2020}. The development is the library \lean{STUProof} in the directory
+\lean{lean/} of the repository \cite{STUrepo} (\url{https://github.com/anshM123/IQOQI-Conjecture}). The
+final theorem is \lean{STUProof.stu\_exists\_unconditional} in \lean{KirwanFreeFinal.lean}; its statement
+is displayed in Remark~\ref{rem:leanstatement}. All lemmas, propositions and theorems of
+Sections~\ref{sec:reduction}--\ref{sec:cases} are formalised (Lemma~\ref{lem:hall} in the inequality form
+stated after it), including Lemma~\ref{lem:horn} (Horn's theorem), the analytic estimates of
+Section~\ref{sec:special} for all $K$ (not by finite computation), and the polynomial identities of
+Appendix~\ref{app:poly}. The function $\cB$ is defined as the limit of its partial sums, whose existence
+comes from Mathlib's alternating series test.
+
+The reduction of Theorem~\ref{thm:main} to Theorem~\ref{thm:diag} is \lean{stu\_exists\_hermitian}
+(\lean{GeneralH.lean}). Not formalised are the physical discussion of Section~\ref{sec:intro}, the closed
+forms involving $\ln2$ mentioned after Definition~\ref{def:special} (they are not used), the remarks of
+Section~\ref{sec:remarks} (except for the ingredients of the Kirwan route, see Section~\ref{sec:kirwan}),
+and the side remarks marked as checked by computer in Appendix~\ref{app:checks}.
+
+\subsection{Versions and checking}
+The toolchain is Lean \lean{v4.33.1} (file \lean{lean-toolchain}), and Mathlib is pinned to commit
+\lean{0df444a360eaa60ab8c11dca51a86af692955474} (file \lean{lakefile.toml}). The script
+\lean{check.sh} elaborates all files sequentially (to bound memory), then runs \lean{Axioms.lean}, which
+prints the axioms used by $67$ main declarations, and finally searches the sources for the keywords
+\lean{sorry}, \lean{admit}, \lean{native\_decide} and for \lean{axiom} declarations. A complete run
+(log \lean{logs/lean\_check\_final\_unconditional.log} in \cite{STUrepo}) finished with exit code $0$
+after $1573$ seconds (about $26$ minutes) and a peak memory use of roughly $7$\,GB. For every one of the
+printed declarations, including \lean{stu\_exists\_unconditional}, the output has the form
+\begin{alltt}\small
+'STUProof.stu_exists_unconditional' depends on axioms:
+    [propext, Classical.choice, Quot.sound]
+\end{alltt}
+that is, only Lean's three standard axioms (propositional extensionality, choice, and quotient
+soundness) are used, and the keyword search reports no occurrence. In particular no \lean{sorry}, no
+added axiom and no \lean{native\_decide} (which would trust compiled code) is used.
+
+\subsection{Trusted base}
+Besides the Lean kernel, a reader who wants to trust the formal result must check that the statement
+means what it should. It uses Mathlib's real exponential, finite sums, matrices, the Kronecker product
+and the unitary group, and four definitions of the project, displayed in
+Remark~\ref{rem:leanstatement}: \lean{gibbs}, \lean{gibbsState}, \lean{partialTraceA} and
+\lean{partialTraceB}. No other definition of the project enters the statement.
+
+\subsection{Correspondence}
+Table~\ref{tab:lean} lists the main results of this paper and their Lean counterparts (all in the
+namespace \lean{STUProof}).
+
+\begin{table}[ht]
+\centering\small
+\begin{tabular}{p{0.32\textwidth}p{0.38\textwidth}p{0.2\textwidth}}
+\toprule
+Paper & Lean declaration(s) & File\\
+\midrule
+Theorem~\ref{thm:diag} & \lean{stu\_exists\_unconditional} & \lean{KirwanFreeFinal}\\
+Proposition~\ref{prop:reduction} & \lean{stu\_exists\_of\_intervalUnif} & \lean{KirwanFreeU}\\
+Theorem~\ref{thm:unif} & \lean{intervalUnifAll\_all} & \lean{UnifAllN}\\
+Eq.~\eqref{eq:localunitary} & \lean{partialTraceB\_conj\_kronecker}, \lean{partialTraceA\_conj\_kronecker} & \lean{STU}\\
+Lemma~\ref{lem:dom} & \lean{SMaj}, \lean{SMaj.add}, \lean{SMaj.smul}, \lean{SMaj.majOn}, \lean{smaj\_self}, \lean{smaj\_zeroOne} & \lean{KirwanFreeCore}\\
+Lemma~\ref{lem:horn} & \lean{schurHorn} & \lean{SchurHorn}\\
+Proposition~\ref{prop:realisation} & \lean{ReachTri.orthogonal}, \lean{tri\_reachable}, \lean{lc\_reachable} & \lean{KirwanFreeCore}\\
+Lemma~\ref{lem:convex} & \lean{ReachTri.convex} & \lean{KirwanFreeCore}\\
+Lemma~\ref{lem:T}, Corollary~\ref{cor:thermal} & \lean{lemmaT}, \lean{thermal\_clip\_weights} & \lean{KirwanFreeCore}\\
+Lemmas~\ref{lem:telescope}, \ref{lem:decomp} & \lean{clipZ\_eq}, \lean{one\_sub\_clipZ}, \lean{wk\_cell\_identity} & \lean{KirwanFree}\\
+Lemma~\ref{lem:crossrun} & \lean{crossInd\_run}, \lean{card\_filter\_Icc\_hook}, \lean{crossInd\_sum} & \lean{KirwanFreeHook}\\
+Lemma~\ref{lem:hall} (inequality form) & \lean{leftM\_nonneg}, \lean{Ltot\_pos}, \lean{sum\_aM} & \lean{KirwanFree}\\
+Definition~\ref{def:unif}, Lemma~\ref{lem:unifdom} & \lean{IsIntervalUnif}, \lean{IntervalUnifAll}, \lean{IsIntervalUnif.smaj} & \lean{IntervalUnif}\\
+Proposition~\ref{prop:wk} & \lean{wkU\_reach}, \lean{wkU\_smaj}, \lean{wkU\_rows} & \lean{KirwanFreeU}\\
+Proposition~\ref{prop:renewal}, Lemma~\ref{lem:compl} & \lean{isIntervalUnif\_renU}, \lean{isIntervalUnif\_boxJ}, \lean{IsIntervalUnif.compl} & \lean{Renewal}\\
+Lemmas~\ref{lem:levels}--\ref{lem:rowvalue} & \lean{thg\_cells}, \lean{thg\_run\_rec}, \lean{thg\_row\_succ}, \lean{row\_const\_value} & \lean{DipoleUnif}\\
+Lemma~\ref{lem:Qdiff}, Proposition~\ref{prop:dipole} & \lean{dipQ\_succ}, \lean{dip\_run}, \lean{dip\_row\_succ}, \lean{isIntervalUnif\_dip} & \lean{DipoleUnif}\\
+Lemmas~\ref{lem:alt}--\ref{lem:omega} & \lean{alt\_rec\_bounds}, \lean{alt\_rec\_bounds2}, \lean{betaF\_add}, \lean{betaF\_bounds}, \lean{lemmaB}, \lean{sigmaF\_bounds}, \lean{sigmaF\_succ\_lt}, \lean{aF\_eq\_sigma}, \lean{omegaF\_eq}, \lean{wF\_eq} & \lean{UnifFacts}\\
+Lemma~\ref{lem:sigma}(v)--(viii) & \lean{msig\_le}, \lean{gamma\_sig\_le}, \lean{gamma\_sig\_add\_a}, \lean{phi\_low\_ge} & \lean{UnifAllN}\\
+Proposition~\ref{prop:facts} & \lean{factF1}, \dots, \lean{factF6} & \lean{UnifFacts}\\
+Lemma~\ref{lem:closed} & \lean{dipTau\_low}, \lean{dipTau\_base}, \lean{dipS\_base}, \lean{dipS\_succ} & \lean{UnifAllN}\\
+Propositions~\ref{prop:caseC}, \ref{prop:caseE}, \ref{prop:caseD} & \lean{caseC\_cells}, \lean{caseC\_K1\_cells}, \lean{caseE\_cells}, \lean{caseD\_cells} & \lean{UnifAllN}\\
+\bottomrule
+\end{tabular}
+\caption{Paper results and Lean declarations (files in \lean{lean/STUProof/}, extension \lean{.lean}).}
+\label{tab:lean}
+\end{table}
+
+\subsection{Other content of the repository}
+The repository also contains formalised results that are not needed for Theorem~\ref{thm:diag}: the
+Kirwan route of Section~\ref{sec:kirwan}, with Kirwan's theorem as an explicit hypothesis; unconditional
+proofs for $d\le20$ and $d\le40$ from kernel-checked certificates of ``hook decompositions'' (a stronger
+combinatorial statement that implies $\mathrm{UNIF}(n)$); and an alternative explicit ``cross''
+construction for interval uniformisations. These are superseded by Theorem~\ref{thm:diag}.
+
+%==================================================================================================
+\section{Remarks}\label{sec:remarks}
+%==================================================================================================
+
+\subsection{The strong majorization form is false for \texorpdfstring{$d\ge4$}{d >= 4}}
+For $d=3$, every $q\prec p$ is symmetrically reachable from $p\otimes p$
+\cite[Thm.~1]{BakhshinezhadEtAl2019}. This fails in every higher dimension, so the thermal structure of
+the target (Lemma~\ref{lem:T}) cannot be dispensed with.
+
+\begin{proposition}\label{prop:counterexample}
+Let $d\ge4$, $\delta=\frac1{5d}$, $\eta=2\delta^2$, and
+\begin{gather*}
+  p=(1-\delta-(d-2)\eta,\ \delta,\ \eta,\dots,\eta),\qquad s=1-p_0=\delta+(d-2)\eta,\\
+  q=\Bigl(p_0,\ \frac s{d-1},\dots,\frac s{d-1}\Bigr).
+\end{gather*}
+Then $p$ is strictly positive and nonincreasing (so it is the Gibbs vector of $H=\diag(-\ln p_i)$ at
+$\beta=1$), $q\prec p$, but no state $\rho$ in the unitary orbit of $\diag(p\otimes p)$ has both marginals
+with spectrum $q$. For $d=4$: $p=(0.94,0.05,0.005,0.005)$ and $q=(0.94,0.02,0.02,0.02)$.
+\end{proposition}
+
+\begin{proof}
+Since $\delta\le\frac1{20}$ and $2(d-2)\delta<\frac25$, we have $s\le\frac75\delta$ and $p_0>\frac12$, so
+$p_0>\delta>\eta>0$; $q$ is nonincreasing, and $q\prec p$ because $q$ is the image of $p$ under the doubly
+stochastic matrix $1\oplus\frac1{d-1}J_{d-1}$. The eigenvalues of $\diag(p\otimes p)$, in nonincreasing
+order $\lambda_1\ge\lambda_2\ge\cdots$, start with
+\[
+  \lambda_1=p_0^2>\lambda_2=\lambda_3=p_0\delta>\lambda_4=\dots=\lambda_{2d-1}=p_0\eta ,
+\]
+and all others are products $p_ip_j$ with $i,j\ge1$, hence $\le\delta^2<p_0\eta$ (as $p_0>\frac12$). Note
+$2\lambda_1+\lambda_2+\dots+\lambda_{2d-1}=2p_0(p_0+\delta+(d-2)\eta)=2p_0$, and the remaining eigenvalues
+sum to $s^2$.
+
+Suppose $\rho$ is in the orbit and both marginals have spectrum $q$. Applying a local unitary $V\otimes W$
+(which preserves the orbit and the marginal spectra) we may assume that $|0\rangle$ is an eigenvector of
+$\rho_A$ and of $\rho_B$ for the eigenvalue $p_0$. Let $P_2=|00\rangle\langle00|$ and let $P_1$ be the
+projection onto $O=\mathrm{span}\{|0j\rangle,|j0\rangle:j\ge1\}$, of rank $2(d-1)$. With
+$X=|0\rangle\langle0|\otimes1+1\otimes|0\rangle\langle0|=2P_2+P_1$,
+\begin{align*}
+  2p_0&=\langle0|\rho_A|0\rangle+\langle0|\rho_B|0\rangle=\Tr[X\rho]=\Tr[P_2\rho]+\Tr[(P_2+P_1)\rho]\\
+  &\le\lambda_1+(\lambda_1+\dots+\lambda_{2d-1})=2p_0 ,
+\end{align*}
+by Ky Fan's maximum principle \cite{Bhatia1997}. So both Ky Fan bounds are equalities. If a
+rank-$r$ projection $P$ satisfies $\Tr[P\rho]=\lambda_1+\dots+\lambda_r$ and $\lambda_r>\lambda_{r+1}$, then
+$P$ is the spectral projection of $\rho$ for its $r$ largest eigenvalues (writing
+$\Tr[P\rho]=\sum_i\lambda_i\langle v_i|P|v_i\rangle$ with weights in $[0,1]$ summing to $r$, equality forces
+$\langle v_i|P|v_i\rangle=1$ for $i\le r$). Because of the gaps $\lambda_1>\lambda_2$ and
+$\lambda_{2d-1}>\lambda_{2d}$, $\rho$ is block diagonal,
+$\rho=\lambda_1P_2\oplus\rho_O\oplus\rho_R$ with respect to
+$\C|00\rangle\oplus O\oplus R$, $R=\mathrm{span}\{|ij\rangle:i,j\ge1\}$, where $\rho_O$ has eigenvalues
+$\lambda_2,\dots,\lambda_{2d-1}$ and $\Tr\rho_R=s^2$.
+
+Now compute $\rho_A$. The partial trace over $B$ of $|0j\rangle\langle j'0|$ vanishes for $j,j'\ge1$, and
+$\Tr_B\rho_R$ is supported on $\mathrm{span}\{|j\rangle:j\ge1\}$. Hence
+$\rho_A=\langle0|\rho_A|0\rangle\,|0\rangle\langle0|\oplus(Y+Z)$, where $Y$ is the compression of $\rho_O$
+to $\mathrm{span}\{|j0\rangle:j\ge1\}\cong\C^{d-1}$ and $Z=\Tr_B\rho_R\ge0$, $\Tr Z=s^2$. Since
+$\langle0|\rho_A|0\rangle=p_0$ and $\rho_A$ has spectrum $q$, all $d-1\ge3$ eigenvalues of $Y+Z$ equal
+$s/(d-1)$. But by Weyl's inequality and Cauchy interlacing \cite{Bhatia1997},
+\begin{align*}
+  \lambda_3(Y+Z)&\le\lambda_3(Y)+\lambda_1(Z)\le\lambda_3(\rho_O)+\Tr Z=p_0\eta+s^2\\
+  &<2\delta^2+2\delta^2=\frac{4\delta}{5d}<\frac{\delta}{d-1}\le\frac s{d-1},
+\end{align*}
+using $s^2\le\frac{49}{25}\delta^2$. This contradiction proves the claim.
+\end{proof}
+
+For $d=4$ the final inequality reads $0.0083<0.02$. The inequalities in this proof were also checked in
+exact arithmetic for $4\le d\le400$ (Appendix~\ref{app:checks}).
+
+Conversely, the set of symmetric marginal spectra is not contained in $\{q:q\prec p\}$ either. For
+$d=3$ and $p=(0.4,0.35,0.25)$, mixing the three cells $(1,1)$, $(0,2)$, $(2,0)$ (distinct rows and
+columns) to the common diagonal value $0.1075$, which is majorized by $(p_1^2,p_0p_2,p_2p_0)$, gives
+(Lemma~\ref{lem:horn} and the argument of Proposition~\ref{prop:realisation}) a state whose two marginals
+are both $\diag(0.4075,0.335,0.2575)$; its largest entry exceeds $p_0$.
+
+\subsection{The Kirwan route}\label{sec:kirwan}
+We sketch an alternative proof of Theorem~\ref{thm:diag}, which uses Kirwan's convexity theorem and is
+\emph{not needed} for the results of this paper. For $k\in[d]$ let
+$v_k=(\frac{P_k}{k+1},\dots,\frac{P_k}{k+1},p_{k+1},\dots,p_{d-1})$ with $P_k=p_0+\dots+p_k$.
+\begin{enumerate}
+\item Every $v_k$ is a symmetric marginal spectrum of $p\otimes p$, via an explicit real orthogonal
+matrix: the tail levels $j>k$ are relabelled by cyclic shifts of the top block $T=\{0,\dots,k\}$ (chosen
+by greedy bin packing, so that each shift class carries weight at most $\frac1{k+1}$), and on each cyclic
+diagonal $\{(a,a+s)\}\subseteq T\times T$ a Schur--Horn rotation realises the image of the diagonal
+under one doubly stochastic circulant matrix. Lean: \lean{vk\_reachable}, \lean{exists\_binPacking}
+(\lean{Construction.lean}).
+\item $\gamma_{\beta'}(E)\in\conv\{v_0,\dots,v_{d-1}\}$ (Lemma~5 of \cite{BakhshinezhadEtAl2019}; Lean:
+\lean{lemma5}, \lean{Lemma5.lean}).
+\item By Kirwan's theorem \cite{Kirwan1984}, applied to $U(d)\times U(d)$ acting on the unitary orbit of
+$\diag(p\otimes p)$ with moment map $\rho\mapsto(\Tr_B\rho,\Tr_A\rho)$, the set of pairs of sorted marginal
+spectra is a convex polytope \cite{Klyachko2004,ChristandlMitchison2006}; its intersection with the
+diagonal $\{(q,q)\}$ is convex and contains all $v_k$, hence $\gamma_{\beta'}(E)$.
+\end{enumerate}
+In Lean, step~3 is the hypothesis \lean{KirwanSymmetricConvexity d}, and \lean{stu\_exists}
+(\lean{STU.lean}) proves Theorem~\ref{thm:diag} from it. Kirwan's theorem itself is not formalised.
+
+\subsection{Further remarks}
+\emph{More general targets.} The argument proves more than Theorem~\ref{thm:diag}: every
+$q\in\conv\{w_0,\dots,w_{d-1}\}$ belongs to $\Reach(p)$ and is therefore a symmetric marginal of
+$\diag(p\otimes p)$. By Lemma~\ref{lem:T} this includes $g(p)/\sum_ig(p_i)$ for every concave nondecreasing
+$g:[0,\infty)\to[0,\infty)$ with $\sum_ig(p_i)>0$. This generalisation is not stated separately in Lean,
+but it follows from the formalised statements \lean{lemmaT}, \lean{wkU\_reach}, \lean{ReachTri.convex}
+and \lean{ReachTri.orthogonal} by the argument of Proposition~\ref{prop:reduction}.
+
+\emph{Explicitness.} The configuration $F$ is explicit: its entries are rational functions of $p$ and
+of the numbers $a(K)$, $w(K)$ (which involve $\ln 2$). The orthogonal matrix is block diagonal over the
+$2d-1$ diagonals of the array, and on each diagonal it is a product of Givens rotations and permutations
+obtained constructively from Lemma~\ref{lem:horn} \cite{ChanLi1983}.
+
+\emph{Numerical confirmation.} Independently of the proof, the whole chain was implemented from the
+formulas of this paper: for $300$ random Hermitian $H$ with $d\le6$ (including degenerate spectra) the
+resulting unitaries have both marginals equal to $\tau_{\beta'}(H)$ up to $4\cdot10^{-15}$
+(Appendix~\ref{app:checks}).
+
+\subsection{Outlook}
+The set $\mathcal S(p)$ of symmetric marginal spectra of $\diag(p\otimes p)$ remains to be understood: we
+know $\conv\{w_k\}\cup\conv\{v_k\}\subseteq\mathcal S(p)$ (the second inclusion via Kirwan), that
+$\mathcal S(p)\ne\{q:q\prec p\}$ for $d\ge4$, and that $\mathcal S(p)\not\subseteq\{q:q\prec p\}$. Natural
+next questions are the analogous problem for more than two copies, quantitative (robust) versions, and
+whether the fixed diagonal structure used here also settles other quantum marginal problems with
+diagonal marginals.
+
+
+%==================================================================================================
+\appendix
+\section{Polynomial identities for F1--F4}\label{app:poly}
+%==================================================================================================
+
+With $u,\varepsilon$ from Lemma~\ref{lem:lemmaB} and $\aup,\alo,w^-_{\mathrm{odd}},w^-_{\mathrm{even}}$
+from the proof of Proposition~\ref{prop:facts}, the following are identities of rational functions (in
+\eqref{eq:A3}, \eqref{eq:A5} and \eqref{eq:A7}, $K=k+2$). All numerator coefficients are positive.
+\begin{align}
+  \alo(K)&=\frac{K^5+13K^4+70K^3+194K^2+256K+128}{2(K+1)(K+2)^6},\label{eq:A1}\\
+  \alo(K)-\aup(K+1)&=\frac{2K^4+23K^3+101K^2+170K+98}{2(K+1)(K+2)^6},\label{eq:A2}\\
+  \frac1{2(K+1)}-\aup(K)-\aup(K+1)&=\frac{P_3(k)}{2(k+3)^6(k+4)^7},\label{eq:A3}\\
+  w^-_{\mathrm{odd}}(K)&=\frac{P_{4a}(K)}{128(K+1)^5(K+2)^6},\label{eq:A4}\\
+  \frac{4w^-_{\mathrm{odd}}(K)}{K+1}-\aup(K)-\aup(K+1)&=\frac{P_{4b}(k)}{32(k+3)^6(k+4)^6},\label{eq:A5}\\
+  w^-_{\mathrm{even}}(K)&=\frac{P_{4c}(K)}{4(K+2)^6(2K+3)^6},\label{eq:A6}\\
+  \frac{4w^-_{\mathrm{even}}(K)}{K+1}-\aup(K)-\aup(K+1)&=\frac{P_{4d}(k)}{2(k+3)^6(k+4)^6(2k+7)^6},\label{eq:A7}
+\end{align}
+where
+\begin{align*}
+P_3(k)&=k^{12}+41k^{11}+764k^{10}+8545k^9+63789k^8+334153k^7+1256064k^6+3400638k^5\\
+&\quad+6544384k^4+8654345k^3+7354236k^2+3503150k+660280,\\
+P_{4a}(K)&=48K^{10}+768K^9+5442K^8+22428K^7+59385K^6+105468K^5+127292K^4\\
+&\quad+103200K^3+53840K^2+16320K+2176,\\
+P_{4b}(k)&=16k^{10}+544k^9+8242k^8+73212k^7+421633k^6+1641880k^5+4368048k^4\\
+&\quad+7817152k^3+8974576k^2+5940736k+1710240,\\
+P_{4c}(K)&=160K^{11}+3200K^{10}+29012K^9+157296K^8+566317K^7+1420999K^6+2535030K^5\\
+&\quad+3215114K^4+2841125K^3+1666285K^2+583870K+92626,\\
+P_{4d}(k)&=192k^{16}+10816k^{15}+285192k^{14}+4672168k^{13}+53227666k^{12}+447135728k^{11}\\
+&\quad+2864967224k^{10}+14282437922k^9+55985185735k^8+173131057544k^7\\
+&\quad+420984335806k^6+796458028404k^5+1149337523504k^4+1223024950168k^3\\
+&\quad+905103455591k^2+416231111464k+89613810730.
+\end{align*}
+These are the identities \lean{poly\_F1}, \lean{poly\_F2}, \lean{poly\_F3}, \lean{poly\_F4a},
+\lean{poly\_F4b}, \lean{poly\_F4c}, \lean{poly\_F4d} of \lean{UnifFacts.lean}, where they are proved by
+\lean{field\_simp; ring}. We also verified them independently with exact computer algebra
+(Appendix~\ref{app:checks}).
+
+%==================================================================================================
+\section{Independent computer checks}\label{app:checks}
+%==================================================================================================
+
+The proof does not depend on any computation beyond the formal verification. To guard against
+transcription errors between the Lean development and this paper, every formula stated here was
+re-implemented from the paper and checked; the scripts and their logs are available with the source
+files of this paper (directory \lean{checks/}).
+\begin{itemize}
+\item \lean{check\_identities.py} (exact computer algebra): the ingredients of Lemma~\ref{lem:lemmaB},
+the identities of Lemmas~\ref{lem:sigma}, \ref{lem:omega} and \ref{lem:Qdiff}, the renewal identities of
+Proposition~\ref{prop:renewal}, the Hall identity of Lemma~\ref{lem:hall}, and
+\eqref{eq:A1}--\eqref{eq:A7} with positivity of all coefficients.
+\item \lean{check\_facts\_numeric.py} and \lean{check\_small\_values.py}: F1--F6 and
+Corollary~\ref{cor:facts} at $60$ digits for $K\le3000$ (F4 for $K\le1200$), the exact enclosures of
+$a(1),a(2),a(3)$, the closed forms $a(1)=3-4\ln2$, etc., $0<\alpha^*\le\frac2{K+1}$ for
+$2\le K\le150$, $K+1\le M\le K+150$, and agreement of the amplitudes of Table~\ref{tab:cases} with an
+independent implementation in \cite{STUrepo} (all intervals with $n\le40$).
+\item \lean{check\_constructions.py}: the renewal squares agree with the block description ($n\le24$);
+exact verification of Definition~\ref{def:unif} for all intervals of all boxes $n\le22$ with the
+constructions of Table~\ref{tab:cases} ($\alpha^*$ rounded to a rational with denominator
+$\le10^{30}$); agreement of $\sT$ with an independent implementation of the run recursion ($n\le30$); the
+cell conditions \eqref{eq:cell1}, \eqref{eq:cell2} with the exact $\alpha^*$ at $50$ digits for all
+$17296$ intervals with $1\le\ell\le h\le n-2$, $n\le48$; the closed forms of Section~\ref{sec:closed};
+$Y^0=\cR^h_n-\cR^{\ell-1}_n$ for $n\le20$; and floating-point checks near the top ($K\le6$, $n\le400$)
+and for random intervals with $n$ up to $2000$.
+\item \lean{check\_thg\_generic.py}: Lemmas~\ref{lem:levels}--\ref{lem:rowvalue} with random rational
+$\sT,\sH,\sG$.
+\item \lean{check\_wk.py}: Lemmas~\ref{lem:telescope}--\ref{lem:hall} and Proposition~\ref{prop:wk} in
+exact arithmetic for random rational spectra (with ties) with $d\le8$ and every $k$; Lemma~\ref{lem:T}
+and Corollary~\ref{cor:thermal} for $300$ random thermal instances.
+\item \lean{check\_end\_to\_end.py}: the full construction of Theorem~\ref{thm:main}, including the
+reduction for non-diagonal $H$, with explicit Givens rotations, for $300$ random instances with $d\le6$.
+\item \lean{check\_counterexample.py}: the inequalities in the proof of
+Proposition~\ref{prop:counterexample} for $4\le d\le400$ (exact), a numerical test of the interlacing
+step, and the $d=3$ example.
+\end{itemize}
+
+\bibliographystyle{amsplain}
+\bibliography{refs}
+
+\end{document}

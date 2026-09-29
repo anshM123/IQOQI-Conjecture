@@ -1,0 +1,5 @@
+OK   runs of F = sum mu_k F_k majorised by the runs of p(x)p (300 instances)
+OK   O real orthogonal (max |O O^T - 1| = 2.22e-16)
+OK   both marginals of U(tau x tau)U^dag equal tau_beta'(H) for random NON-diagonal H, d <= 6 (max error 3.55e-15)
+
+ALL END-TO-END CHECKS PASSED

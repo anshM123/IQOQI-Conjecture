@@ -1,0 +1,26 @@
+{
+  "title": "Symmetrically thermalizing unitaries exist in every dimension",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "description": "Proof, machine-checked in Lean 4 with Mathlib, of the conjecture of Bakhshinezhad, Clivaz, Vitagliano, Erker, Rezakhani, Huber and Friis (J. Phys. A 52, 465303 (2019)): for every local dimension d, every Hermitian Hamiltonian H and all inverse temperatures 0 <= beta' <= beta, beta > 0, there is a global unitary on C^d (x) C^d that maps two copies of the thermal state at beta to a state whose two marginals are both thermal at beta'. Correlations between identical thermal systems can therefore always be created at the minimal energy cost. The repository contains the paper (LaTeX source and PDF), the complete Lean 4 formalisation (theorem stu_exists_hermitian), exact certificates, independent checkers and verification logs.",
+  "creators": [
+    {
+      "name": "Mishra, Ansh"
+    },
+    {
+      "name": "Senthilkumar, Aryan"
+    }
+  ],
+  "license": "mit",
+  "access_right": "open",
+  "keywords": [
+    "quantum thermodynamics",
+    "symmetrically thermalizing unitaries",
+    "quantum marginal problem",
+    "majorization",
+    "Lean 4",
+    "formal verification"
+  ],
+  "version": "1.0",
+  "language": "eng"
+}

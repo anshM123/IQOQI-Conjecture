@@ -1,5 +1,9 @@
 # Symmetrically thermalizing unitaries exist (the IQOQI 2019 conjecture)
 
+**Authors:** Ansh Mishra, Aryan Senthilkumar
+
+**Paper:** [`paper/STU_paper.pdf`](paper/STU_paper.pdf) (LaTeX source `paper/main.tex`; the scripts of its appendix on independent computer checks are in `paper/checks/`).
+
 **Conjecture** (Bakhshinezhad, Clivaz, Vitagliano, Erker, Rezakhani, Huber, Friis, *J. Phys. A* **52**, 465303 (2019), arXiv:1904.07942; open in Clivaz's thesis, arXiv:2012.04321). Take:
 - a local dimension d and a Hamiltonian H_A = H_B = H;
 - a thermal state τ_β = e^{−βH}/Z;
@@ -91,9 +95,16 @@ python coord_facts.py                    # the same facts, independent method (i
 - `certificates/`: exact hook decompositions (n ≤ 41) and per-interval dipole amplitudes (n ≤ 256; all independently checked).
 - `code/`: independent exact checkers and the generators.
 - `logs/`: our verification runs (Lean and Python).
-- `research-log/`: the complete program log and the Lean formalisation log.
+- `paper/`: the paper (PDF and LaTeX source) and the scripts of its computer checks.
+- `research-log/`: the Lean formalisation log.
 
 ## References
 - M. Bakhshinezhad, F. Clivaz, G. Vitagliano, P. Erker, A. T. Rezakhani, M. Huber, N. Friis, *Thermodynamically optimal creation of correlations*, J. Phys. A 52, 465303 (2019).
 - F. Clivaz, PhD thesis, arXiv:2012.04321.
 - F. Kirwan, *Convexity properties of the moment mapping III*, Invent. Math. 77, 547–552 (1984).
+
+## License
+MIT (see `LICENSE`). Copyright (c) 2026 Ansh Mishra and Aryan Senthilkumar.
+
+## How to cite
+See `CITATION.cff`. The archived release (Zenodo) has its own DOI.

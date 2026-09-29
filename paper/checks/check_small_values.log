@@ -1,0 +1,21 @@
+OK   (12,10,10): alpha = 0 matrix equals U^10_12 - U^9_12
+OK   (12,10,10): minimal entry of the renewal difference is -677/4620 = -677/4620
+OK   (12,10,10): the entry -1/10 occurs at (2,9) and (9,2)
+   attained at cells [(5, 6), (6, 5)]
+OK   (12,10,10): with alpha = 2/7 all entries in [0,1]
+OK   u(2) = 79/256, u(3) = 1127/5832, u(4) = 2297/16384
+OK   a(1) in [15/64 - 343/46656, 15/64]
+OK   a(2) in [67/729 - 1297/746496, 67/729]
+OK   a(3) in [193/4096 - 31689/64000000, 193/4096]
+   a(1) in [0.2270233, 0.2343750]
+   a(2) in [0.0901693, 0.0919067]
+   a(3) in [0.0466240, 0.0471191]
+OK   F5(i):  a1l - 2/21 - a3h > 0
+OK   F5(ii): a1h - 2/21 + a2h <= 2/7
+OK   F5(iii): a1h < 5/21
+OK   F6: a1h < 1/4 and a3h < 1/20
+   F5(i) lower bound 0.08466608375281696 ; F5(ii) slack 0.05467065941602978 ; F5(iii) slack 0.003720238095238095
+OK   Lean decimals: 0.227 < a1l, a1h < 0.2344; 0.0901 < a2l, a2h < 0.092; 0.0466 < a3l, a3h < 0.0472
+OK   amplitude rule (C/D/E, alpha*) agrees with publish/code/construct.py for all 1<=lo<=hi<=n-2, n<=40 and n in {60,101,150} (max |diff| = 5.0e-46)
+
+ALL SMALL-VALUE CHECKS PASSED

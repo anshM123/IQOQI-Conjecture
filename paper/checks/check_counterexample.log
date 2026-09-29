@@ -1,0 +1,11 @@
+OK   (a) p positive, sorted, normalised; q sorted, normalised, q majorised by p  (d = 4..400)
+OK   (b) spectrum of p(x)p: top 2d-1 values p0^2, p0 delta x2, p0 eps x2(d-2); strict gaps; rest <= delta^2
+OK   (c) 2 lambda_1 + lambda_2 + ... + lambda_{2d-1} = 2 p0 and the remaining mass is s^2
+OK   (d) p0 eps + s^2 < s/(d-1)  (max ratio lhs/rhs = 0.5641)
+OK   d = 4: p = (0.94, 0.05, 0.005, 0.005), q = (0.94, 0.02, 0.02, 0.02), p0 eps + s^2 = 0.0083 < 0.02
+   (note) with delta = 0.05, eps = 0.005 fixed and eps-padding, the inequality (d) fails for d in [9, 10, 11, 12, 13] ...
+OK   zero-padded family: von Neumann maximum exceeds 2 p0 for d = 5..11 (argument of the report does not apply)
+OK   numerical: lambda_3(Y+Z) <= p0 eps + s^2 < s/(d-1) for random block-structured states (d = 4,5,6,8)
+OK   d = 3 example: LC mixing is majorised, both marginals = (0.4075, 0.335, 0.2575), q_0 > p_0
+
+ALL COUNTEREXAMPLE CHECKS PASSED
