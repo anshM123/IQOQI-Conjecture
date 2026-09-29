@@ -9,7 +9,7 @@ Toolchain: `leanprover/lean4:v4.33.1`, Mathlib from the existing `.lake` cache (
 
 ## How to check
 
-From the project root `formal-conjectures/`, with `C:\Users\anshm\.elan\bin` on `PATH`:
+From the project root `formal-conjectures/`, with `<home>\.elan\bin` on `PATH`:
 
     bash STUProof/check.sh
 
