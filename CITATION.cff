@@ -1,7 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it as below."
+message: "If you use this work, please cite the preprint below."
 title: "Symmetrically thermalizing unitaries exist in every dimension"
-type: software
 authors:
   - family-names: Mishra
     given-names: Ansh
@@ -18,3 +17,19 @@ keywords:
   - "majorization"
   - "Lean 4"
   - "formal verification"
+preferred-citation:
+  type: article
+  status: preprint
+  title: "Symmetrically thermalizing unitaries exist in every dimension"
+  authors:
+    - family-names: Mishra
+      given-names: Ansh
+    - family-names: Senthilkumar
+      given-names: Aryan
+  year: 2026
+  month: 9
+  url: "https://github.com/anshM123/IQOQI-Conjecture"
+  keywords:
+    - "quantum thermodynamics"
+    - "symmetrically thermalizing unitaries"
+    - "Lean 4"
