@@ -1,0 +1,10 @@
+[fig1] d = 5, beta = 1.3: STU marginal error 1.4e-16, orthogonality error 2.2e-16
+[fig1] beta'/beta = 0.85: dE = 0.149929 (bound curve 0.149929), dI = 0.259540 bits (bound 0.259540)
+[fig1] beta'/beta = 0.65: dE = 0.389471 (bound curve 0.389471), dI = 0.595006 bits (bound 0.595006)
+[fig1] beta'/beta = 0.45: dE = 0.677246 (bound curve 0.677246), dI = 0.890345 bits (bound 0.890345)
+[fig1] beta'/beta = 0.25: dE = 1.010441 (bound curve 1.010441), dI = 1.107771 bits (bound 1.107771)
+[fig1] beta'/beta = 0.00: dE = 1.472230 (bound curve 1.472230), dI = 1.214671 bits (bound 1.214671)
+[fig1] random unitaries: max (dI - bound) = -3.71e-12 bits (must be <= 0)
+[fig2] beta'/beta = 0.5: max |marginal - Gibbs| = 1.7e-16
+[fig2] nonzero entries of O: 71 of 625; block sizes [1, 2, 3, 4, 5, 4, 3, 2, 1]
+[fig3] Y(9,[2,5]): entries in [0.0000, 0.8051], symmetric 0.0e+00, row sums 3.555555555556..3.555555555556 (target 3.555555555556), runs [4. 4. 4. 3. 2. 1. 0. 0. 0.] (target [4, 4, 4, 3, 2, 1, 0, 0, 0])
