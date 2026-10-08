@@ -1,4 +1,4 @@
-"""Coordinator's INDEPENDENT verification of facts F1-F6 of the P-PROOF all-n proof (no P-PROOF code imported).
+"""INDEPENDENT verification of facts F1-F6 of the P-PROOF all-n proof (no P-PROOF code imported).
 Definitions (from the proof text): beta(x) = sum_{j>=0} (-1)^j/(x+j); a(K) = 4K^2 beta(K+1) + 1 - 2K;
 omega(k) = sum_{y=k+1}^{2k} (-1)^y k/(y(y-1)) (rational); w(K) = (-1)^K omega(K+1).
  F1 a(K) > 0 (K>=1); F2 a(K) > a(K+1) (K>=1); F3 a(K)+a(K+1) <= 1/(2(K+1)) (K>=2);

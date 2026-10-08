@@ -73,8 +73,8 @@
   (in particular all n <= 62, and 64).  Background jobs (PIDs 106996/64056 ascending to 81, 112092/110320 descending
   81..63) continue writing certs/thg_n*.txt / thgb_n*.txt, logs certs/thg_run.log / thg_run_b.log.
 
-## Phase 2 (coordinator: prove T/H/G feasible for every n; certs 3..61 re-verified by coordinator)
-- Reformulation (coordinator obs.): Phi_a(s) = (n-s)T(s,a) + [n-s odd]G(s,a), psi_a(s) = 2[s<=a] - Phi_a(s);
+## Phase 2 (goal: prove T/H/G feasible for every n; certs 3..61 re-verified independently)
+- Reformulation: Phi_a(s) = (n-s)T(s,a) + [n-s odd]G(s,a), psi_a(s) = 2[s<=a] - Phi_a(s);
   H(t,a) = (psi_a(t-1) - psi_a(t+1))/2  (so H>=0 <=> Phi_a nondecreasing along parity classes of s<=a and
   Phi_a(a), Phi_a(a-1) <= 2).  Rows: with D = T-H split into D_sym + D_anti w.r.t. t <-> n-t:
   G(u,a) = K'_a - 2 E_anti,a((n-1-u)/2), E_anti(k) = sum_{t<=k} D_anti(t)  (D_sym is free).
@@ -87,7 +87,7 @@
   D = T-H = 0 EXACTLY on levels t < (n-1-a)/2 (G(u,a)=0 for u>a), i.e. the recurrence
   (n-t)(phi(t+1)-phi(t-1)) = 2 phi(t) - [n-t odd] G(t,a) there -> the oscillating image kernel unless G forces it.
 - Tested: G(u,a) independent of u for all hooks a < n-1-k: infeasible (k=0 all n; k=1 for n>=11; k=2 fails n>=21).
-- Coordinator hint (b): image prefix b <= A, residual rho(l) = 1 - sum_{b<=A} kappa_b(l); SELF-SIMILARITY IDENTITY
+- Hint (b): image prefix b <= A, residual rho(l) = 1 - sum_{b<=A} kappa_b(l); SELF-SIMILARITY IDENTITY
   L(s) := (n-s)rho(s) + 2 sum_{t=s+1,s+3..<=A} rho(t) = N' - [A-s even], N' = n-A-1 (verified by summing the lower
   run equations).  Product ansatz K(l,a) = rho(l) phi(a) for all low tokens; long runs s>A = runs of an N'-box.
 - Product ansatz (all low tokens share one law phi on the upper hooks, A=(n-1)/2): identity L(s) verified exactly,
@@ -146,7 +146,7 @@
   minimal k: 3 (n=7), 2 (9..13,17,19), 3 (15, 21..33), 4 (35..63), 5 (65..69).  n=71..101 running
   (certs/delta_run_hi.log); float LP: n=81 k=5/6 ok, n=101 k=6 ok (k=5 infeasible).
 - Stopped my superseded thg_exact jobs (PIDs 64056/106996, 110320/112092) and the slow no-prefix test.
-- Coordinator: independently verified ALL certs/delta_n*.txt (odd 7..101) => HD(n) for all n <= 102.
+- Independently verified ALL certs/delta_n*.txt (odd 7..101) => HD(n) for all n <= 102.
 - Image kernel first-negative hook: n - a_first = 6, 9, 15, 23 at n = 21, 41, 81, 161  ~ 0.78 n^(2/3)
   (oscillating mode of the recurrence grows linearly in n-s; "0.78n" was a small-n coincidence).
 - KEY OBSERVATION: every cell off the main antidiagonal pairs a T-token at level s with an H-token at level
@@ -198,7 +198,7 @@
   all hooks of the two-dipole construction (incl. the residual top hook) entrywise >= 0.  Runs/rows/cells hold for
   EVERY choice of c (proved), so feasibility of this O(n)-variable LP IMPLIES HD(n) (not conversely).
 
-## Phase 3 (coordinator: STU needs only UNIF(n,lo,hi) per interval: symmetric, entries in [0,1], runs
+## Phase 3 (observation: STU needs only UNIF(n,lo,hi) per interval: symmetric, entries in [0,1], runs
 ##          r_s = #{a in [lo,hi]: a>=s}, rows ((hi+1)^2-lo^2)/n; hi = n-1 solved (J - renewal square))
 - Read unif/LOG.md (P-UNIF, Phases 1-2): renewal squares U^m (lo=0) and complements (hi=n-1) PROVEN; half
   construction X exact n<=76 but X>=0 on short runs open; D_ren = U^hi - U^(lo-1) (= sum of IMAGE hooks lo..hi, by
@@ -216,7 +216,7 @@
 - Local rule's binding cells (p3_binding.py): lower bound c_min always at the CENTRE low cells (run 0 or 1 at the
   middle position, parity alternating with a); upper bound at the neighbouring centre cell.  Window c_max-c_min
   shrinks to ~0.005 at a = n-2.
-- Coordinator hint: Psi(p) = 1/2 H(p) + (-1)^(L-p) Delta_K + O(K^2/(n-p)^3), Delta_K = 1/2 - K + 2K^2 T_K,
+- Hint: Psi(p) = 1/2 H(p) + (-1)^(L-p) Delta_K + O(K^2/(n-p)^3), Delta_K = 1/2 - K + 2K^2 T_K,
   T_K = sum_j (-1)^j/(K+1+j); image operator L maps 2(-1)^s to 2(-1)^s[n-s odd] (one-class constant) -> a dipole
   at level t0 == n (mod 2) adds exactly D[s == n-1] on the short runs s <= 2t0-n-1, i.e. an alternating T-mode of
   amplitude D: choose D to cancel the parity mode of D_ren.

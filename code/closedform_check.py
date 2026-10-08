@@ -1,4 +1,4 @@
-"""Independent check of Lemma 2.1 + Lemma 4.1 + Lemma 5.2 against the coordinator's s-recursion (build_THG, exact
+"""Independent check of Lemma 2.1 + Lemma 4.1 + Lemma 5.2 against an independent s-recursion (build_THG, exact
 Fractions with rational alpha), comparing with the closed form evaluated in mpmath (60 digits)."""
 import sys, os, random
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'unif', 'coord'))

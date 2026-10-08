@@ -3,7 +3,7 @@
    Y_a(i,j) = 1/2 T(|i-j|,a) + 1/2 G(|i-j|,a)      (i+j == n-1, main antidiagonal).
 Hooks a <= A use the explicit image kernel T=H=img_a (exact recursion), G=0; the remaining hooks are solved by an
 LP (HiGHS vertex) + exact rational re-solve on the support.  The full matrices are written in the stu3 certificate
-format (a s i value) and checked by the coordinator's INDEPENDENT checker stu3/coord_check_hook.py."""
+format (a s i value) and checked by an INDEPENDENT checker stu3/coord_check_hook.py."""
 import sys, os, time
 from fractions import Fraction as F
 import numpy as np

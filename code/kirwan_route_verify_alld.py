@@ -1,5 +1,5 @@
 """
-R021: coordinator's independent check of the all-d circulant construction for v_k (own code).
+R021: independent check of the all-d circulant construction for v_k (own code).
 Marginals after the construction depend only on diagonal weights (coherences live inside cyclic diagonals
 D_s = {|i,i+s>}, which have distinct rows and columns). Schur–Horn guarantees a unitary on span(D_s) realising the
 diagonal B lambda^(s) because B (circulant, doubly stochastic, beta >= 0) gives B lambda <= lambda (majorisation).

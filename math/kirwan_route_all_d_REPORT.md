@@ -49,5 +49,5 @@ Step 4: local unitaries rotate both marginals to τ_{β′}. ∎
 - Earlier construction (C) with exact rational certificates for d = 5, 6, 7 (certs.py) remains independent confirmation.
 
 ## Files
-alld_construction.py (explicit unitaries), verify_alld_coord.py (coordinator check), lc.py, v2_construction.py, certs.py, certify_c.py,
+alld_construction.py (explicit unitaries), verify_alld_coord.py (independent check), lc.py, v2_construction.py, certs.py, certify_c.py,
 cond_c.py, check_lemma5.py, LOG.md.

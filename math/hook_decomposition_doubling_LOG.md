@@ -51,7 +51,7 @@
   uniform-margin cross structures have zero first moment in d=j-i, while the odd cross windows d in [-1-c, c] have
   first moment -(c+1) -> odd cross parts need tilted margins -> non-black-box within parts.
 - Exact certificates for odd n = 21..39 (certs/hookdec_n*.txt, exact_odd.py = stu3 method, 3s..~10min each).
-- assemble.py: all n <= NMAX with odd part certified; even n by DOUBLING; every file checked by the coordinator's
+- assemble.py: all n <= NMAX with odd part certified; even n by DOUBLING; every file checked by an
   independent checker stu3/coord_check_hook.check.
 
 ## STATUS (end of session)
@@ -61,6 +61,6 @@ VERIFIED EXACTLY (independent checker): see assemble logs (all n <= 40; all even
 OPEN: odd n > 39.  All black-box recursions for odd n are impossible (LP-certified negative results above); an odd
 step needs structured (tilted-margin) sub-objects or an explicit family.
 - FINAL VERIFICATION (assemble.py 80, log certs/assemble80.log): 60 decompositions written to certs/final_n{n}.txt and
-  each checked EXACTLY by the coordinator's independent checker stu3/coord_check_hook.check: all n = 1..40 and all even
+  each checked EXACTLY by an independent checker stu3/coord_check_hook.check: all n = 1..40 and all even
   n <= 80 (odd n <= 20: stu3 certificates; odd 21..39: certs/hookdec_n*.txt; even n: doubling, recursively).
   Also n = 64 via the XOR closed form (pow2check.py), independent check True.

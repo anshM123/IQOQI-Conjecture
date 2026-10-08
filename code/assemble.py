@@ -1,6 +1,6 @@
 """Assemble exact hook decompositions for all n <= NMAX whose odd part has a certificate:
    odd n <= 20: ../stu3/hookdec_n{n}.txt ; odd 21..39: certs/hookdec_n{n}.txt ; even n: DOUBLING of n/2 (recursively).
-   Writes certs/final_n{n}.txt and verifies each file with the coordinator's INDEPENDENT checker (stu3/coord_check_hook.py)."""
+   Writes certs/final_n{n}.txt and verifies each file with an INDEPENDENT checker (stu3/coord_check_hook.py)."""
 import sys, os, time
 sys.path.insert(0, '../stu3')
 from coord_check_hook import check as indep_check

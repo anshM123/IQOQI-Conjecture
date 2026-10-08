@@ -68,7 +68,7 @@ LEMMA 2.1 (pair sums).  Let K >= 1, K+1 <= M <= n-1, and (alpha = 0 or n >= 2K+2
  beta(x) := sum_{j>=0} (-1)^j/(x+j) (x > 0);  beta(x) + beta(x+1) = 1/x;  beta(m+1) = (-1)^m (ln 2 - sum_{i=1}^m (-1)^(i-1)/i).
  g(y) := 2/(y(y-1));   sigma(x) := sum_{j>=1} (-1)^(j-1) g(x+j) = 4 beta(x) - 2/x   (x >= 1).
  a(K) := 2/(K+1) - 1 + K^2 sigma(K+1) = 4K^2 beta(K+1) + 1 - 2K = 4K^2 (-1)^K (ln 2 - sum_{i<=K} (-1)^(i-1)/i) + 1 - 2K.
-   (a(K) = 2 Delta_K of the coordinator; a(1) = 3-4ln2, a(2) = 16ln2-11, a(3) = 25-36ln2; a(K) ~ 1/(2(K+1)^2).)
+   (a(K) = 2 Delta_K; a(1) = 3-4ln2, a(2) = 16ln2-11, a(3) = 25-36ln2; a(K) ~ 1/(2(K+1)^2).)
  omega(k) := sum_{y=k+1}^{2k} (-1)^y k/(y(y-1))  (rational)  = (-1)^k (2k beta(k+1) - 1) + 2k beta(2k) - 1/2.
    [Proof: omega/k = -sum_{z=k}^{2k-1}(-1)^z/z - sum_{y=k+1}^{2k}(-1)^y/y and sum_{z>=m}(-1)^z/z = (-1)^m beta(m).]
 LEMMA 3.1 (alternating sums).  c_0 >= c_1 >= ... >= 0, c_j -> 0  =>  0 <= sum (-1)^j c_j <= c_0; if moreover

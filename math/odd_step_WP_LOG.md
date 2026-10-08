@@ -43,7 +43,7 @@
 
 ## EXACT verification of the WP odd step
 - exact_wp.py: HiGHS dual-simplex vertex of WP -> exact rational solve on the support (sympy sparse rref) -> exact check
-  of WP -> exact assembly (Fractions) -> file -> coordinator's INDEPENDENT checker stu3/coord_check_hook.check.
+  of WP -> exact assembly (Fractions) -> file -> INDEPENDENT checker stu3/coord_check_hook.check.
 - exact_pipeline.py (self-contained recursion from D(1)=[[1]]: even n by DOUBLING, odd n by WP odd step with the
   recursion's own outputs as inputs): ALL n = 2..32 verified exactly by the independent checker (certs/rec_n*.txt,
   certs/pipeline64.log).  Denominators grow fast along the recursion (~1e34 at n=31); n=33 (M=16) exact solve 188 s,

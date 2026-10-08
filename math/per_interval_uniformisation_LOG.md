@@ -57,7 +57,7 @@ Proof of the renewal square (for the report):
   (all 0<=lo<=hi<n), 0 failures (verify_half_1_60.log, verify_half_61_76.log).
 
 ## Phase 2 (2026-09-28): proof of X >= 0 on short runs (or robust modification)
-- Coordinator re-implemented X from the report formulas (coord/coord_check_X.py): 816 cases n<=16 exact OK.
+- X was re-implemented independently from the report formulas (coord/coord_check_X.py): 816 cases n<=16 exact OK.
 - P2 (p2_rays.py, p2_netweights.py): RAY LEMMA. Every reversal-block construction X = sum_B x_B rev(B); a cell (i,j)
   equals the sum of the net weights x_B of the concentric blocks [i-k, j+k] (k = 0..min(i,n-1-j)); x([i,j]) =
   X(i,j) - X(i-1,j+1). If non-terminal short blocks have x_B <= 0, the minimum over short cells on each antidiagonal

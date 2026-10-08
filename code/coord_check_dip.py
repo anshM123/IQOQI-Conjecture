@@ -1,4 +1,4 @@
-"""Coordinator's INDEPENDENT implementation (from the P-HOOK2 Phase-3 report formulas only) of the per-interval
+"""INDEPENDENT implementation (from the P-HOOK2 Phase-3 report formulas only) of the per-interval
 dipole construction for UNIF(n, lo, hi), with amplitudes read from hook2/certs/unif_dip_n{n}.txt:
   s = |i-j|, m' = min(i+j+1, 2n-1-i-j) (m' = n exactly on i+j = n-1);
   G(u) = sum_t D_t [u <= 2t-n-1];  T(s) = 0 for s > hi and, downward from s = hi,

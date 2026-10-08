@@ -1,4 +1,4 @@
-"""Coordinator's INDEPENDENT implementation (from the formulas in the P-UNIF report only; no P-UNIF code imported)
+"""INDEPENDENT implementation (from the formulas in the P-UNIF report only; no P-UNIF code imported)
 of the explicit uniformisation X(n, lo, hi) and exact check of UNIF(n, lo, hi):
   symmetric, 0 <= X <= 1, run sums r_s = #{a in [lo,hi]: a >= s}, row sums ((hi+1)^2 - lo^2)/n.
 Renewal square U^m_n (0 <= m <= n-2): K = n-m-1, H(l) = 1 - K^2/((n-l)(n-l+1)) for 1<=l<=m+1, H(l) = 0 for l > m+1;

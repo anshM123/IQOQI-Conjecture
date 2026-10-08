@@ -1,5 +1,5 @@
 """
-Coordinator's INDEPENDENT checker for the Hook Decomposition certificates (does not import any P-STU3 code).
+INDEPENDENT checker for the Hook Decomposition certificates (does not import any P-STU3 code).
 File format: lines "a s i value" (exact fraction), missing entries = 0.
 Conditions (n-box, hooks a = 0..n-1, runs s = 0..a, positions i = 0..n-1-s):
   nonneg: x[a][s][i] >= 0 and entries only for s <= a, 0 <= i <= n-1-s

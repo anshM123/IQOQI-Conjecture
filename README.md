@@ -1,4 +1,4 @@
-# Symmetrically thermalizing unitaries exist (the IQOQI 2019 conjecture)
+# Symmetrically thermalizing unitaries exist (the 2019 conjecture of Bakhshinezhad et al.)
 
 **Authors:** Ansh Mishra, Aryan Senthilkumar
 
@@ -31,7 +31,7 @@ Physically: correlations between two identical thermal systems can always be cre
 | 3 | Conjecture for **every d**, assuming ONE explicit elementary inequality `XShortNonneg n lo hi`: an explicit rational n×n matrix X(n,lo,hi) is ≥ 0 on its short diagonals | machine-checked reduction; inequality proved in Lean for n ≤ 8 | `lean/STUProof/KirwanFreeAllD.lean`, `STUProof.stu_exists_all_of_shortNonneg`; `ShortNonnegSmall.lean` |
 | 4 | Conjecture for every d from **interval uniformisations** for all box sizes n ≤ d (`IntervalUnifAll n`) | machine-checked reduction | `lean/STUProof/KirwanFreeU.lean`, `STUProof.stu_exists_of_intervalUnif` |
 | 5 | `IntervalUnifAll n` for **all n ≤ 256**, via an explicit construction with exact rational certificates (per-interval "dipole" construction). With #4 this gives the conjecture for **every d ≤ 256** (now subsumed by #8) | exact computer verification (Python `fractions`), two independent implementations | `certificates/per_interval_dipole/`, `code/coord_check_dip.py`, `logs/` |
-| 6 | Conjecture for **every d** (paper proof, Kirwan route: explicit circulant construction + Kirwan convexity + Lemma 5) | proved on paper; numerically verified on 20 000 random instances (d ≤ 15); **external referee check requested** | `math/kirwan_route_all_d_REPORT.md` |
+| 6 | Conjecture for **every d** (paper proof, Kirwan route: explicit circulant construction + Kirwan convexity + Lemma 5) | proved on paper: step 3 is Kirwan's published convexity theorem, steps 1–2 are machine-checked (`vk_reachable`, `lemma5`; see #2); numerically verified on 20 000 random instances (d ≤ 15) | `math/kirwan_route_all_d_REPORT.md` |
 | 7 | Hook Decomposition Lemma HD(n) (a stronger combinatorial statement that also implies #4) for all n ≤ 102 | Doubling Lemma HD(M) ⇒ HD(2M) machine-checked; exact certificates for odd n ≤ 101 | `lean/STUProof/HookDoubling.lean`, `math/`, `logs/` |
 | 8 | **`IntervalUnifAll n` for EVERY n**, via an explicit one-dipole construction. Together with #4 this gives the **conjecture for every d, without Kirwan** | **complete paper proof**. The only computer inputs are six one-parameter facts F1–F6 (about a(K) = 4K²(−1)^K(ln 2 − Σ_{i≤K}(−1)^{i−1}/i) + 1 − 2K), verified exactly by two independent methods; the construction is also exact-checked for all intervals n ≤ 170 and sampled up to n = 4000 | `math/UNIF_all_n_PROOF.md`, `code/verify_facts.py`, `code/coord_facts.py`, `logs/unif_all_n_*` |
 

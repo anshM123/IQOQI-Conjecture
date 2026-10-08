@@ -6,7 +6,7 @@ common denominator D, natural numbers y = D * x in a dense table tbl[a][s][i]
 STUProof/HookCertSplit.lean) that are elaborated one after the other (`Elab.async false`), which
 keeps the kernel's memory bounded (a single check of all constraints of n = 39 needs > 7.5 GB).
 
-Each certificate is first re-checked with the coordinator's independent checker
+Each certificate is first re-checked with an independent checker
 (stu3/coord_check_hook.py) and the scaled integer table is re-checked here against the exact
 integer conditions of IsHookDecompositionNat.
 

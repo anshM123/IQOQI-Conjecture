@@ -21,7 +21,7 @@
   bounds reduce to a(K)+a(M) <= 2/(K+1) and 0 <= alpha* <= 2/(K+1); upper bounds via alternating-part cancellation.
 - K = 1 (hi = n-2): single dipole alpha = 2/7 (one-sided bulk condition 0 <= e(inf) <= alpha).
 - hi <= (n-1)/2: D_ren, valid since Gamma sigma(n) >= 1/(2K+2) >= a(K)+a(K+1).
-- construct.py + check_construct.py (coordinator's independent builder): FULL exact matrix check n = 2..34,
+- construct.py + check_construct.py (an independent builder): FULL exact matrix check n = 2..34,
   fast exact check n = 35..88 so far: 0 failures (rational approximant of alpha*, den 1e40).
 
 ## Exact fact verification (verify_facts.py, log verify_facts.log): ALL FACTS VERIFIED: True
@@ -97,7 +97,7 @@ LEMMA 2.1 (pair sums).  Let K >= 1, K+1 <= M <= n-1, and (alpha = 0 or n >= 2K+2
  beta(x) := sum_{j>=0} (-1)^j/(x+j) (x > 0);  beta(x) + beta(x+1) = 1/x;  beta(m+1) = (-1)^m (ln 2 - sum_{i=1}^m (-1)^(i-1)/i).
  g(y) := 2/(y(y-1));   sigma(x) := sum_{j>=1} (-1)^(j-1) g(x+j) = 4 beta(x) - 2/x   (x >= 1).
  a(K) := 2/(K+1) - 1 + K^2 sigma(K+1) = 4K^2 beta(K+1) + 1 - 2K = 4K^2 (-1)^K (ln 2 - sum_{i<=K} (-1)^(i-1)/i) + 1 - 2K.
-   (a(K) = 2 Delta_K of the coordinator; a(1) = 3-4ln2, a(2) = 16ln2-11, a(3) = 25-36ln2; a(K) ~ 1/(2(K+1)^2).)
+   (a(K) = 2 Delta_K; a(1) = 3-4ln2, a(2) = 16ln2-11, a(3) = 25-36ln2; a(K) ~ 1/(2(K+1)^2).)
  omega(k) := sum_{y=k+1}^{2k} (-1)^y k/(y(y-1))  (rational)  = (-1)^k (2k beta(k+1) - 1) + 2k beta(2k) - 1/2.
    [Proof: omega/k = -sum_{z=k}^{2k-1}(-1)^z/z - sum_{y=k+1}^{2k}(-1)^y/y and sum_{z>=m}(-1)^z/z = (-1)^m beta(m).]
 LEMMA 3.1 (alternating sums).  c_0 >= c_1 >= ... >= 0, c_j -> 0  =>  0 <= sum (-1)^j c_j <= c_0; if moreover
@@ -185,9 +185,9 @@ UPPER BOUNDS (eta <= tau, so it suffices: tau(x)+tau(y) <= 2 for y < x, x-y odd;
 ## 9. Verification record (corroboration; the proof above needs only verify_facts.py)
 - verify_facts.py -> verify_facts.log: Lemma 3.3 ingredients (symbolic), omega identity (k <= 60, interval), F1-F4 exact
   for K = 1..11, F1-F4 polynomial positivity for all real K >= 10, F5/F6: ALL FACTS VERIFIED: True.
-- closedform_check.py: Lemma 4.1 and Lemma 5.2 closed forms vs the coordinator's independent s-recursion
+- closedform_check.py: Lemma 4.1 and Lemma 5.2 closed forms vs an independent s-recursion
   (unif/coord/coord_check_dip.build_THG), 400 random (n,lo,hi,alpha), n <= 300: max deviation 1.8e-58 (60 digits).
-- construct.py (the rule; alpha* rationalised with limit_denominator(1e40)) + check_construct.py (coordinator's
+- construct.py (the rule; alpha* rationalised with limit_denominator(1e40)) + check_construct.py (an
   independent builder, EXACT Fractions): FULL matrix check (symmetry, [0,1], runs, rows) of ALL intervals n = 2..34;
   exact 1-D cell check of ALL intervals n = 35..130 (and 131.. running, check_fast_131_170.log): 0 failures.
 - bign_check.py: 200 intervals each (all K = 1..20 near-top hooks/near-hooks, boundary n = 2K+2 / 2K+1, random) at

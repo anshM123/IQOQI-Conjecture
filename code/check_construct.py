@@ -1,4 +1,4 @@
-"""Exact (Fractions) check of the P-PROOF construction with the coordinator's independent T/H/G builder
+"""Exact (Fractions) check of the P-PROOF construction with an independent T/H/G builder
 (unif/coord/coord_check_dip.build_THG): fast 1-D cell check for all intervals, full matrix check optional."""
 import sys, os, time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'unif', 'coord'))

@@ -1,4 +1,4 @@
-"""Sanity check at large n: exact (Fractions) check of selected intervals with the coordinator's independent builder."""
+"""Sanity check at large n: exact (Fractions) check of selected intervals with an independent builder."""
 import sys, time, random
 from construct import amplitudes
 from check_construct import fast_ok

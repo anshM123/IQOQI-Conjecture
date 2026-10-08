@@ -232,7 +232,7 @@ Main statements:
 Notes:
 - Renewal square. The block construction (reversal permutations of the blocks `[0,ℓ-1]`,
   `[n-ℓ,n-1]` with weight `H(ℓ)` and `[a,a+ℓ-1]` with weight `H(ℓ)-H(ℓ+1)`) has the cell form
-  `U(i,j) = A(|i-j|+1) + A(min(i+j+2, 2n-i-j))`. I checked this exactly against the coordinator's
+  `U(i,j) = A(|i-j|+1) + A(min(i+j+2, 2n-i-j))`. I checked this exactly against the independent
   block implementation (`unif/coord/coord_check_X.py`, `renewal`): all `n ≤ 30`, `m ≤ n-2`, 206,770
   cells. Lean works with this form only.
   * `A(p) + A(p+1) = H(p)` (`renA_add`). `U(i,j) = A(p) + A(p+2k+1)`, `p = |i-j|+1`,
@@ -250,7 +250,7 @@ Notes:
   * `X ≤ 1`, since `θ, 1-θ ≥ 0` and the subtracted terms are nonnegative.
   * `X ≥ 0` on runs `≥ lo`, since both `U^{lo-1}` terms vanish there by the band property.
 - Faithfulness of `XShortNonneg`. A Python transcription of the Lean definitions (`renU`, `place`,
-  `avgPlace`, `crossTheta`, `crossX`, with ℕ truncated subtraction) equals the coordinator's
+  `avgPlace`, `crossTheta`, `crossX`, with ℕ truncated subtraction) equals the
   independent `X_matrix` exactly in all 560 cases `1 ≤ lo ≤ hi ≤ n-2`, `n ≤ 16`. Its short-run
   entries are all `≥ 0`, so the stated hypothesis is the intended inequality, and it holds there.
 - Small `n`. `ℝ` is not computable, so `crossX` is mirrored over `ℚ` with the same formulas and cast
